@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+*.whl
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+frontend/dist/
+frontend/build/
+
+# Data (large files)
+data/raw/
+data/screenshots/
+data/html/
+*.csv
+!data/manifests/.gitkeep
+
+# Models
+*.pt
+*.pth
+*.pkl
+*.joblib
+*.h5
+*.onnx
+ml/experiments/mlruns/
+
+# Research outputs (generated)
+research/results/*.csv
+research/figures/*.png
+research/figures/*.pdf
+
+# Logs
+*.log
+logs/
+
+# Docker
+*.pid
+
+# Secrets
+secrets/

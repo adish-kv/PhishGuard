@@ -1,0 +1,171 @@
+# ===========================================
+# PhishGuard Default Configuration
+# ===========================================
+# This file contains all tunable parameters.
+# Override via environment variables or experiment configs.
+# ===========================================
+
+app:
+  name: "PhishGuard"
+  version: "0.1.0"
+  description: "Adaptive Multimodal Phishing Detection Research Framework"
+
+analysis:
+  mode: "adaptive"  # "full" or "adaptive"
+  timeout_seconds: 30
+  max_concurrent: 5
+
+url_analyzer:
+  suspicious_tlds:
+    - ".xyz"
+    - ".top"
+    - ".click"
+    - ".loan"
+    - ".work"
+    - ".gq"
+    - ".ml"
+    - ".cf"
+    - ".tk"
+    - ".ga"
+    - ".buzz"
+    - ".zip"
+    - ".mov"
+  suspicious_keywords:
+    - "login"
+    - "signin"
+    - "verify"
+    - "account"
+    - "secure"
+    - "update"
+    - "confirm"
+    - "banking"
+    - "password"
+    - "credential"
+    - "suspended"
+    - "unusual"
+    - "restrict"
+    - "alert"
+
+html_analyzer:
+  max_html_size_bytes: 1048576  # 1MB
+  fetch_timeout_seconds: 10
+  suspicious_js_patterns:
+    - "document.cookie"
+    - "window.location"
+    - "eval("
+    - "atob("
+    - "fromCharCode"
+    - "unescape("
+    - "setTimeout("
+    - "setInterval("
+
+ssl_analyzer:
+  timeout_seconds: 5
+  verify_hostname: true
+
+domain_analyzer:
+  whois_timeout_seconds: 10
+  rdap_fallback: true
+  missing_value: -1  # Sentinel for unavailable domain age
+
+screenshot:
+  viewport_width: 1280
+  viewport_height: 720
+  timeout_ms: 15000
+  max_redirects: 3
+  wait_after_load_ms: 2000
+
+ocr:
+  languages:
+    - "en"
+  gpu: false
+  confidence_threshold: 0.3
+  brand_names:
+    - "google"
+    - "facebook"
+    - "microsoft"
+    - "apple"
+    - "amazon"
+    - "paypal"
+    - "netflix"
+    - "instagram"
+    - "twitter"
+    - "linkedin"
+    - "chase"
+    - "wellsfargo"
+    - "bankofamerica"
+    - "citi"
+    - "dropbox"
+    - "adobe"
+    - "dhl"
+    - "usps"
+    - "fedex"
+    - "walmart"
+
+visual:
+  model_name: "openai/clip-vit-base-patch32"
+  embedding_dim: 512
+  similarity_threshold: 0.85
+  top_k: 5
+
+fusion:
+  architecture: "mlp"  # "mlp", "late", "attention"
+  url_encoder_dim: 32
+  html_encoder_dim: 32
+  ssl_encoder_dim: 16
+  domain_encoder_dim: 16
+  ocr_encoder_dim: 32
+  visual_projector_dim: 64
+  hidden_dim: 128
+  dropout: 0.3
+
+adaptive:
+  # These thresholds are tuned experimentally — NOT hardcoded final values
+  stage1_low_threshold: 0.15
+  stage1_high_threshold: 0.85
+  stage2_low_threshold: 0.10
+  stage2_high_threshold: 0.90
+  uncertainty_threshold: 0.3
+  enable_html_stage: true
+  enable_visual_stage: true
+
+training:
+  batch_size: 64
+  learning_rate: 0.001
+  epochs: 50
+  early_stopping_patience: 10
+  random_seeds:
+    - 42
+    - 123
+    - 456
+    - 789
+    - 1024
+  val_split: 0.15
+  test_split: 0.15
+
+security:
+  blocked_ip_ranges:
+    - "10.0.0.0/8"
+    - "172.16.0.0/12"
+    - "192.168.0.0/16"
+    - "127.0.0.0/8"
+    - "169.254.0.0/16"
+    - "0.0.0.0/8"
+    - "::1/128"
+    - "fc00::/7"
+  blocked_hostnames:
+    - "localhost"
+    - "metadata.google.internal"
+    - "metadata.internal"
+  allowed_schemes:
+    - "http"
+    - "https"
+  max_redirects: 3
+  request_timeout_seconds: 15
+  max_response_size_bytes: 5242880  # 5MB
+  rate_limit_per_minute: 10
+
+logging:
+  level: "INFO"
+  format: "json"
+  file: null  # Set to path for file logging

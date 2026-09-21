@@ -1,0 +1,102 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "phishguard"
+version = "0.1.0"
+description = "Adaptive Multimodal Phishing Detection Research Framework"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "PhishGuard Research Team"}
+]
+
+dependencies = [
+    # Core API
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    
+    # Database
+    "sqlalchemy[asyncio]>=2.0.23",
+    "asyncpg>=0.29.0",
+    "alembic>=1.13.0",
+    
+    # HTTP Client
+    "httpx>=0.25.0",
+    
+    # Analyzers
+    "beautifulsoup4>=4.12.0",
+    "lxml>=4.9.0",
+    "tldextract>=5.1.0",
+    "python-whois>=0.9.0",
+    
+    # ML Core
+    "numpy>=1.26.0",
+    "pandas>=2.1.0",
+    "scikit-learn>=1.3.0",
+    "xgboost>=2.0.0",
+    "lightgbm>=4.1.0",
+    
+    # Deep Learning
+    "torch>=2.1.0",
+    "transformers>=4.36.0",
+    
+    # Vector Search
+    "faiss-cpu>=1.7.4",
+    
+    # Explainability
+    "shap>=0.44.0",
+    
+    # Experiment Tracking
+    "mlflow>=2.9.0",
+    
+    # Visualization
+    "matplotlib>=3.8.0",
+    "seaborn>=0.13.0",
+    
+    # Utilities
+    "pyyaml>=6.0.0",
+    "python-multipart>=0.0.6",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+screenshot = [
+    "playwright>=1.40.0",
+]
+ocr = [
+    "easyocr>=1.7.0",
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "httpx>=0.25.0",
+    "ruff>=0.1.0",
+    "mypy>=1.7.0",
+]
+all = [
+    "phishguard[screenshot,ocr,dev]",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests", "ml/tests", "tests"]
+asyncio_mode = "auto"
+addopts = "-v --tb=short"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
