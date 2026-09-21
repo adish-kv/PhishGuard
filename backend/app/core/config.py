@@ -216,6 +216,21 @@ class LoggingConfig(BaseConfig):
     file: str | None = Field(default=None)
 
 
+class SSLConfig(BaseConfig):
+    """SSL analyzer configuration."""
+
+    timeout_seconds: int = Field(default=5, ge=1, le=30)
+    verify_hostname: bool = Field(default=True)
+
+
+class DomainConfig(BaseConfig):
+    """Domain age analyzer configuration."""
+
+    whois_timeout_seconds: int = Field(default=10, ge=1, le=30)
+    rdap_fallback: bool = Field(default=True)
+    missing_value: int = Field(default=-1)
+
+
 class Settings(BaseSettings):
     """Root application settings.
 
@@ -239,6 +254,8 @@ class Settings(BaseSettings):
     security: SecurityConfig = Field(default_factory=SecurityConfig)
     analysis: AnalysisConfig = Field(default_factory=AnalysisConfig)
     adaptive: AdaptiveConfig = Field(default_factory=AdaptiveConfig)
+    ssl_analyzer: SSLConfig = Field(default_factory=SSLConfig)
+    domain_analyzer: DomainConfig = Field(default_factory=DomainConfig)
     database: DatabaseConfig = Field(default_factory=DatabaseConfig)
     screenshot: ScreenshotConfig = Field(default_factory=ScreenshotConfig)
     ocr: OCRConfig = Field(default_factory=OCRConfig)
