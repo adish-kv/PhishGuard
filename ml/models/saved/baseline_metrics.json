@@ -1,0 +1,42 @@
+{
+  "url": {
+    "experiment": "Exp 1: URL Lexical",
+    "modality": "url",
+    "num_features": 22,
+    "accuracy": 0.912,
+    "f1_score": 0.908,
+    "mean_latency_ms": 0.45
+  },
+  "html": {
+    "experiment": "Exp 2: HTML Static",
+    "modality": "html",
+    "num_features": 28,
+    "accuracy": 0.935,
+    "f1_score": 0.932,
+    "mean_latency_ms": 18.2
+  },
+  "ssl": {
+    "experiment": "Exp 3: SSL Certificate",
+    "modality": "ssl",
+    "num_features": 10,
+    "accuracy": 0.841,
+    "f1_score": 0.835,
+    "mean_latency_ms": 12.0
+  },
+  "domain": {
+    "experiment": "Exp 4: Domain WHOIS",
+    "modality": "domain",
+    "num_features": 6,
+    "accuracy": 0.796,
+    "f1_score": 0.789,
+    "mean_latency_ms": 85.4
+  },
+  "visual": {
+    "experiment": "Exp 5: Visual CLIP",
+    "modality": "visual",
+    "num_features": 512,
+    "accuracy": 0.928,
+    "f1_score": 0.924,
+    "mean_latency_ms": 210.0
+  }
+}

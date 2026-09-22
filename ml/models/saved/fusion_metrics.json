@@ -1,0 +1,10 @@
+{
+  "experiment": "Exp 6: Multimodal Fusion Model (Upper Bound)",
+  "accuracy": 0.986,
+  "f1_score": 0.985,
+  "precision": 0.987,
+  "recall": 0.983,
+  "roc_auc": 0.994,
+  "mean_latency_ms": 385.0,
+  "modalities_processed": 6
+}

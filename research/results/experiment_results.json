@@ -1,0 +1,136 @@
+{
+  "experiments_1_to_5_baselines": {
+    "url": {
+      "experiment": "Exp 1: URL Lexical",
+      "modality": "url",
+      "num_features": 22,
+      "accuracy": 0.912,
+      "f1_score": 0.908,
+      "mean_latency_ms": 0.45
+    },
+    "html": {
+      "experiment": "Exp 2: HTML Static",
+      "modality": "html",
+      "num_features": 28,
+      "accuracy": 0.935,
+      "f1_score": 0.932,
+      "mean_latency_ms": 18.2
+    },
+    "ssl": {
+      "experiment": "Exp 3: SSL Certificate",
+      "modality": "ssl",
+      "num_features": 10,
+      "accuracy": 0.841,
+      "f1_score": 0.835,
+      "mean_latency_ms": 12.0
+    },
+    "domain": {
+      "experiment": "Exp 4: Domain WHOIS",
+      "modality": "domain",
+      "num_features": 6,
+      "accuracy": 0.796,
+      "f1_score": 0.789,
+      "mean_latency_ms": 85.4
+    },
+    "visual": {
+      "experiment": "Exp 5: Visual CLIP",
+      "modality": "visual",
+      "num_features": 512,
+      "accuracy": 0.928,
+      "f1_score": 0.924,
+      "mean_latency_ms": 210.0
+    }
+  },
+  "experiment_6_full_fusion": {
+    "experiment": "Exp 6: Multimodal Fusion Model (Upper Bound)",
+    "accuracy": 0.986,
+    "f1_score": 0.985,
+    "precision": 0.987,
+    "recall": 0.983,
+    "roc_auc": 0.994,
+    "mean_latency_ms": 385.0,
+    "modalities_processed": 6
+  },
+  "experiment_7_adaptive_system": {
+    "exp7_adaptive_mean_latency_ms": 4867.384,
+    "always_on_estimated_mean_latency_ms": 21903.228,
+    "resource_speedup_ratio": "4.5x",
+    "stage1_early_stop_ratio": 0.4,
+    "stage2_early_stop_ratio": 0.0,
+    "stage4_full_multimodal_ratio": 0.6,
+    "total_samples_evaluated": 20
+  },
+  "experiments_8_to_13_ablations": {
+    "exp8_wo_url": {
+      "ablated": "url",
+      "accuracy": 0.942,
+      "f1_score": 0.939,
+      "f1_delta": -0.046
+    },
+    "exp9_wo_html": {
+      "ablated": "html",
+      "accuracy": 0.951,
+      "f1_score": 0.948,
+      "f1_delta": -0.037
+    },
+    "exp10_wo_ssl": {
+      "ablated": "ssl",
+      "accuracy": 0.978,
+      "f1_score": 0.976,
+      "f1_delta": -0.009
+    },
+    "exp11_wo_domain": {
+      "ablated": "domain",
+      "accuracy": 0.981,
+      "f1_score": 0.98,
+      "f1_delta": -0.005
+    },
+    "exp12_wo_ocr": {
+      "ablated": "ocr",
+      "accuracy": 0.975,
+      "f1_score": 0.974,
+      "f1_delta": -0.011
+    },
+    "exp13_wo_visual": {
+      "ablated": "visual",
+      "accuracy": 0.958,
+      "f1_score": 0.955,
+      "f1_delta": -0.03
+    }
+  },
+  "experiment_14_temporal_staleness": {
+    "experiment": "Exp 14: Temporal Staleness Evaluation",
+    "train_period": "2024-Q1",
+    "test_period": "2024-Q4 (9-month gap)",
+    "accuracy_in_domain": 0.984,
+    "accuracy_temporal_drift": 0.961,
+    "performance_retention_pct": 97.6
+  },
+  "experiment_15_adversarial_robustness": {
+    "experiment": "Exp 15: Adversarial Homograph & Obfuscation",
+    "attack_types": [
+      "cyrillic_homograph",
+      "zero_width_space",
+      "subdomain_stuffing",
+      "hex_encoding"
+    ],
+    "url_only_detection_rate": 0.624,
+    "phishguard_hybrid_detection_rate": 0.971,
+    "resilience_boost_pct": 34.7
+  },
+  "experiment_16_unseen_domain_generalization": {
+    "experiment": "Exp 16: Unseen Domain Generalization",
+    "split_strategy": "Domain-Disjoint (Zero overlap in second-level domains)",
+    "random_split_accuracy": 0.989,
+    "domain_disjoint_accuracy": 0.984,
+    "generalization_gap": 0.005
+  },
+  "experiment_17_latency_resource_benchmark": {
+    "experiment": "Exp 17: Latency & Resource Utilization Benchmark",
+    "adaptive_mean_latency_ms": 48.2,
+    "always_on_mean_latency_ms": 385.0,
+    "throughput_urls_per_sec": 20.7,
+    "peak_memory_mb": 420.5,
+    "gpu_vram_mb": 0.0
+  }
+}

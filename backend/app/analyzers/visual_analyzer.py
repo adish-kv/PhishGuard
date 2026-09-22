@@ -172,7 +172,15 @@ class VisualAnalyzer:
             try:
                 inputs = processor(images=img, return_tensors="pt")
                 with torch.no_grad():
-                    image_features = model.get_image_features(**inputs)
+                    outputs = model.get_image_features(**inputs)
+                    if hasattr(outputs, "image_embeds"):
+                        image_features = outputs.image_embeds
+                    elif hasattr(outputs, "pooler_output"):
+                        image_features = outputs.pooler_output
+                    elif isinstance(outputs, torch.Tensor):
+                        image_features = outputs
+                    else:
+                        image_features = outputs[0]
                     # L2 Normalize embedding
                     image_features = image_features / image_features.norm(dim=-1, keepdim=True)
                     embedding_np = image_features.cpu().numpy().squeeze().astype(np.float32)

@@ -1,0 +1,9 @@
+{
+  "exp7_adaptive_mean_latency_ms": 4867.384,
+  "always_on_estimated_mean_latency_ms": 21903.228,
+  "resource_speedup_ratio": "4.5x",
+  "stage1_early_stop_ratio": 0.4,
+  "stage2_early_stop_ratio": 0.0,
+  "stage4_full_multimodal_ratio": 0.6,
+  "total_samples_evaluated": 20
+}
