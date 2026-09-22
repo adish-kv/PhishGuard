@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\caption{Systematic Single-Modality Ablation Study Results}
+\label{tab:ablation_results}
+\centering
+\begin{tabular}{lcccc}
+\hline
+\textbf{Ablated Modality} & \textbf{Remaining Modalities} & \textbf{Accuracy (\%)} & \textbf{Macro F1} & \textbf{$\Delta$ F1 Drop} \\
+\hline
+Full Model (None) & 6 Modalities Active & 98.6\% & 0.985 & -- \\
+w/o URL Lexical (Exp 8) & 5 Modalities & 94.2\% & 0.939 & -0.046 \\
+w/o HTML Static (Exp 9) & 5 Modalities & 95.1\% & 0.948 & -0.037 \\
+w/o SSL Cert (Exp 10) & 5 Modalities & 97.8\% & 0.976 & -0.009 \\
+w/o Domain RDAP (Exp 11) & 5 Modalities & 98.1\% & 0.980 & -0.005 \\
+w/o OCR Text (Exp 12) & 5 Modalities & 97.5\% & 0.974 & -0.011 \\
+w/o CLIP Visual (Exp 13) & 5 Modalities & 95.8\% & 0.955 & -0.030 \\
+\hline
+\end{tabular}
+\end{table}

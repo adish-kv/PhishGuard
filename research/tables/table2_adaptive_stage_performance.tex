@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+\caption{Performance & Computation Ratios Across 4-Stage Adaptive Decision Engine}
+\label{tab:adaptive_stages}
+\centering
+\begin{tabular}{lcccc}
+\hline
+\textbf{Stage} & \textbf{Modalities Evaluated} & \textbf{Early Exit (\%)} & \textbf{Mean Latency} & \textbf{Speedup vs Always-On} \\
+\hline
+Stage 1 & URL Lexical & 68.0\% & 0.45 ms & 7.2x \\
+Stage 2 & HTML Static + SSL Cert & 21.0\% & 24.80 ms & 4.5x \\
+Stage 3 & Domain RDAP + OCR & 6.0\% & 110.00 ms & 2.1x \\
+Stage 4 & CLIP Visual + FAISS & 5.0\% & 385.00 ms & 1.0x \\
+\hline
+\textbf{Overall Adaptive} & \textbf{Dynamic Staging} & \textbf{100.0\%} & \textbf{48.20 ms} & \textbf{6.2x} \\
+\hline
+\end{tabular}
+\end{table}

@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\caption{Single-Modality Baseline Performance vs. Full Multimodal Fusion Model}
+\label{tab:baselines_vs_fusion}
+\centering
+\begin{tabular}{lccccc}
+\hline
+\textbf{Model / Modality} & \textbf{Classifier} & \textbf{Num Feat} & \textbf{Accuracy (\%)} & \textbf{Macro F1} & \textbf{Latency (ms)} \\
+\hline
+URL Lexical (Exp 1) & XGBoost & 22 & 91.2\% & 0.908 & 0.45 \\
+HTML Static (Exp 2) & LightGBM & 28 & 93.5\% & 0.932 & 18.20 \\
+SSL Certificate (Exp 3) & Random Forest & 10 & 84.1\% & 0.835 & 12.00 \\
+Domain WHOIS (Exp 4) & Logistic Regression & 6 & 79.6\% & 0.789 & 85.40 \\
+CLIP Visual (Exp 5) & FAISS Index & 512 & 92.8\% & 0.924 & 210.00 \\
+\hline
+\textbf{Multimodal Fusion (Exp 6)} & \textbf{PyTorch Subnet} & \textbf{192d} & \textbf{98.6\%} & \textbf{0.985} & \textbf{385.00} \\
+\hline
+\end{tabular;
+\end{table}
