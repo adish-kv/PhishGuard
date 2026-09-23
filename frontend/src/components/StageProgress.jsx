@@ -285,21 +285,21 @@ export default function StageProgress({ result }) {
   const isSelectedExit = selectedIdx === reachedStageIndex;
 
   return (
-    <div className="bg-gray-900/90 border border-gray-800 rounded-2xl p-6 shadow-xl backdrop-blur-xl space-y-6">
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-3">
-          <Layers className="w-5 h-5 text-purple-400" />
+          <Layers className="w-5 h-5 text-blue-600" />
           <div>
-            <h3 className="text-lg font-bold text-white">4-Stage Adaptive Multimodal Pipeline Execution</h3>
-            <p className="text-xs text-gray-400 font-mono">
+            <h3 className="text-lg font-bold text-slate-900">4-Stage Adaptive Multimodal Pipeline Execution</h3>
+            <p className="text-xs text-slate-500 font-mono">
               Click any stage card below to inspect detailed feature extraction & decision metrics
             </p>
           </div>
         </div>
 
         {result.early_stopped && (
-          <span className="flex items-center space-x-1.5 text-xs font-mono font-semibold bg-amber-500/10 text-amber-400 px-3 py-1.5 rounded-full border border-amber-500/30">
+          <span className="flex items-center space-x-1.5 text-xs font-mono font-semibold bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full border border-amber-200">
             <FastForward className="w-4 h-4" />
             <span>Early Exit Triggered at Stage {reachedStageIndex + 1}</span>
           </span>
@@ -323,16 +323,16 @@ export default function StageProgress({ result }) {
               onClick={() => setSelectedStageId(stage.id)}
               className={`relative text-left rounded-xl border p-4 transition-all duration-200 flex flex-col justify-between cursor-pointer focus:outline-none ${
                 isSelected
-                  ? 'ring-2 ring-cyan-400 border-cyan-400 shadow-lg shadow-cyan-500/10 scale-[1.02]'
-                  : 'hover:border-gray-700 hover:bg-gray-800/40'
+                  ? 'ring-2 ring-blue-600 border-blue-600 bg-blue-50/80 shadow-md shadow-blue-500/10 scale-[1.02]'
+                  : 'hover:border-blue-300 hover:bg-slate-50'
               } ${
                 isExitStage
                   ? isPhishing
-                    ? 'bg-red-950/20 border-red-500/40 shadow-md shadow-red-500/10'
-                    : 'bg-emerald-950/20 border-emerald-500/40 shadow-md shadow-emerald-500/10'
+                    ? 'bg-red-50 border-red-300 shadow-sm'
+                    : 'bg-emerald-50 border-emerald-300 shadow-sm'
                   : isExecuted
-                  ? 'bg-gray-950/80 border-cyan-900/50'
-                  : 'bg-gray-950/30 border-gray-800/50 opacity-60'
+                  ? 'bg-slate-50 border-slate-300'
+                  : 'bg-slate-50/40 border-slate-200 opacity-60'
               }`}
             >
               <div>
@@ -341,10 +341,10 @@ export default function StageProgress({ result }) {
                   <span
                     className={`text-xs font-mono font-bold px-2 py-0.5 rounded flex items-center space-x-1 ${
                       isExitStage
-                        ? 'bg-cyan-500 text-gray-950'
+                        ? 'bg-blue-600 text-white'
                         : isExecuted
-                        ? 'bg-gray-800 text-cyan-400'
-                        : 'bg-gray-900 text-gray-600'
+                        ? 'bg-slate-200 text-blue-800'
+                        : 'bg-slate-100 text-slate-500'
                     }`}
                   >
                     <IconComp className="w-3 h-3 mr-1 inline" />
@@ -352,26 +352,26 @@ export default function StageProgress({ result }) {
                   </span>
 
                   {isExecuted && (
-                    <span className="flex items-center text-[11px] font-mono text-gray-400">
-                      <Clock className="w-3 h-3 mr-1 text-cyan-400" />
+                    <span className="flex items-center text-[11px] font-mono text-slate-500">
+                      <Clock className="w-3 h-3 mr-1 text-blue-600" />
                       {latencyMs !== undefined ? `${latencyMs.toFixed(2)} ms` : 'Done'}
                     </span>
                   )}
                   {isSkipped && (
-                    <span className="text-[10px] font-mono text-amber-400/80 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+                    <span className="text-[10px] font-mono text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
                       Bypassed
                     </span>
                   )}
                 </div>
 
                 {/* Stage Name */}
-                <h4 className="text-sm font-semibold text-white mb-2">{stage.name}</h4>
+                <h4 className="text-sm font-semibold text-slate-900 mb-2">{stage.name}</h4>
 
                 {/* Modalities Pill List */}
                 <ul className="space-y-1 mb-3">
                   {stage.modalities.map((mod, mIdx) => (
-                    <li key={mIdx} className="text-xs font-mono text-gray-400 flex items-center space-x-1.5">
-                      <div className={`w-1.5 h-1.5 rounded-full ${isExecuted ? 'bg-cyan-400' : 'bg-gray-700'}`} />
+                    <li key={mIdx} className="text-xs font-mono text-slate-600 flex items-center space-x-1.5">
+                      <div className={`w-1.5 h-1.5 rounded-full ${isExecuted ? 'bg-blue-600' : 'bg-slate-300'}`} />
                       <span className="truncate">{mod}</span>
                     </li>
                   ))}
@@ -379,9 +379,9 @@ export default function StageProgress({ result }) {
               </div>
 
               {/* Bottom Footer */}
-              <div className="pt-2 border-t border-gray-800/60 text-[11px] font-mono flex items-center justify-between text-gray-500">
+              <div className="pt-2 border-t border-slate-200 text-[11px] font-mono flex items-center justify-between text-slate-500">
                 <span>{isExecuted ? 'Active' : 'Bypassed'}</span>
-                <span className="text-cyan-400 font-bold flex items-center space-x-1">
+                <span className="text-blue-600 font-bold flex items-center space-x-1">
                   <span>Inspect</span>
                   <ChevronDown className={`w-3 h-3 transition-transform ${isSelected ? 'rotate-180' : ''}`} />
                 </span>
@@ -392,25 +392,25 @@ export default function StageProgress({ result }) {
       </div>
 
       {/* Detailed Stage Inspector Panel (Appears when clicking any Stage Card) */}
-      <div className="bg-gray-950 border border-cyan-900/40 rounded-xl p-5 space-y-4 font-mono animate-fadeIn">
+      <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-4 font-mono shadow-sm animate-fadeIn">
         {/* Panel Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-gray-800 pb-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-cyan-500/10 border border-cyan-500/30 rounded-lg text-cyan-400">
+            <div className="p-2 bg-blue-100 border border-blue-200 rounded-lg text-blue-700">
               {React.createElement(currentSelectedStage.icon, { className: 'w-5 h-5' })}
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-sm font-bold text-white uppercase">
+                <span className="text-sm font-bold text-slate-900 uppercase">
                   Stage {currentSelectedStage.num}: {currentSelectedStage.name}
                 </span>
                 <span
                   className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
                     isSelectedExit
-                      ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+                      ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
                       : isSelectedExecuted
-                      ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40'
-                      : 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                      ? 'bg-blue-100 text-blue-800 border-blue-300'
+                      : 'bg-amber-100 text-amber-800 border-amber-300'
                   }`}
                 >
                   {isSelectedExit
@@ -420,12 +420,12 @@ export default function StageProgress({ result }) {
                     : 'BYPASSED (COST SAVED)'}
                 </span>
               </div>
-              <p className="text-xs text-gray-400 mt-0.5">{currentSelectedStage.thresholdRule}</p>
+              <p className="text-xs text-slate-500 mt-0.5">{currentSelectedStage.thresholdRule}</p>
             </div>
           </div>
 
-          <div className="text-right text-xs text-gray-400">
-            <div>Benchmark: <span className="text-cyan-400 font-bold">{currentSelectedStage.cost}</span></div>
+          <div className="text-right text-xs text-slate-500">
+            <div>Benchmark: <span className="text-blue-700 font-bold">{currentSelectedStage.cost}</span></div>
           </div>
         </div>
 
@@ -433,7 +433,7 @@ export default function StageProgress({ result }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-1 text-xs">
           {/* Left Column: Extracted Features & Quantitative Verification Breakdown */}
           <div className="space-y-3">
-            <div className="text-cyan-400 font-bold uppercase tracking-wider flex items-center space-x-1.5">
+            <div className="text-blue-700 font-bold uppercase tracking-wider flex items-center space-x-1.5">
               <Info className="w-3.5 h-3.5" />
               <span>Extracted Features & Quantitative Verification Breakdown</span>
             </div>
@@ -462,10 +462,10 @@ export default function StageProgress({ result }) {
                     key={idx}
                     className={`p-3.5 rounded-xl border text-xs font-mono space-y-2 transition-colors ${
                       !isSelectedExecuted
-                        ? 'bg-gray-900/40 border-gray-800 text-gray-500'
+                        ? 'bg-slate-100/60 border-slate-200 text-slate-400'
                         : isFlagged
-                        ? 'bg-red-950/20 border-red-900/40 text-red-200'
-                        : 'bg-gray-900/80 border-gray-800 text-gray-200'
+                        ? 'bg-red-50 border-red-200 text-red-900'
+                        : 'bg-white border-slate-200 text-slate-800 shadow-sm'
                     }`}
                   >
                     {/* Top Row: Feature Name + Status Badge */}
@@ -474,22 +474,22 @@ export default function StageProgress({ result }) {
                         <CheckCircle2
                           className={`w-3.5 h-3.5 shrink-0 ${
                             !isSelectedExecuted
-                              ? 'text-gray-600'
+                              ? 'text-slate-400'
                               : isFlagged
-                              ? 'text-red-400'
-                              : 'text-emerald-400'
+                              ? 'text-red-600'
+                              : 'text-emerald-600'
                           }`}
                         />
-                        <span className="text-white font-bold">{feat.name}</span>
+                        <span className="text-slate-900 font-bold">{feat.name}</span>
                       </div>
 
                       <span
                         className={`text-[10px] font-bold px-2.5 py-0.5 rounded border ${
                           !isSelectedExecuted
-                            ? 'bg-gray-800/60 text-gray-500 border-gray-700/50'
+                            ? 'bg-slate-200 text-slate-500 border-slate-300'
                             : isFlagged
-                            ? 'bg-red-500/20 text-red-400 border-red-500/30'
-                            : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                            ? 'bg-red-100 text-red-700 border-red-300'
+                            : 'bg-emerald-100 text-emerald-700 border-emerald-300'
                         }`}
                       >
                         {badgeText}
@@ -497,19 +497,19 @@ export default function StageProgress({ result }) {
                     </div>
 
                     {/* What is Extracted: Numerical Metrics & Parameters */}
-                    <div className="bg-gray-950/80 p-2.5 rounded-lg border border-cyan-900/40 text-[11px] space-y-0.5">
-                      <span className="text-cyan-400 font-bold uppercase tracking-wider block text-[10px]">
+                    <div className="bg-blue-50/80 p-2.5 rounded-lg border border-blue-200 text-[11px] space-y-0.5">
+                      <span className="text-blue-800 font-bold uppercase tracking-wider block text-[10px]">
                         Extracted Data Metric:
                       </span>
-                      <span className="text-cyan-200 font-mono font-medium block leading-relaxed">
+                      <span className="text-blue-950 font-mono font-medium block leading-relaxed">
                         {extractedMetric}
                       </span>
                     </div>
 
                     {/* How it checks out */}
                     <div className="text-[11px] pl-1 leading-relaxed">
-                      <span className="text-purple-400 font-semibold">Verification Check:</span>{' '}
-                      <span className={!isSelectedExecuted ? 'text-gray-500' : isFlagged ? 'text-red-300 font-medium' : 'text-emerald-300'}>
+                      <span className="text-slate-700 font-semibold">Verification Check:</span>{' '}
+                      <span className={!isSelectedExecuted ? 'text-slate-400' : isFlagged ? 'text-red-700 font-medium' : 'text-emerald-700'}>
                         {checkText}
                       </span>
                     </div>
@@ -521,8 +521,8 @@ export default function StageProgress({ result }) {
 
           {/* Right Column: Stage Triggered Reasons & Risk Indicators */}
           <div className="space-y-2">
-            <div className="text-purple-400 font-bold uppercase tracking-wider flex items-center space-x-1.5">
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+            <div className="text-slate-800 font-bold uppercase tracking-wider flex items-center space-x-1.5">
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
               <span>Stage Decision & Triggered Indicators</span>
             </div>
 
@@ -531,29 +531,29 @@ export default function StageProgress({ result }) {
                 {currentSelectedStage.reasons.map((reason, idx) => (
                   <div
                     key={idx}
-                    className="bg-red-950/20 border border-red-900/40 p-2.5 rounded-lg text-red-300 flex items-start space-x-2"
+                    className="bg-red-50 border border-red-200 p-2.5 rounded-lg text-red-800 flex items-start space-x-2"
                   >
-                    <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" />
+                    <AlertTriangle className="w-3.5 h-3.5 text-red-600 shrink-0 mt-0.5" />
                     <span>{reason}</span>
                   </div>
                 ))}
               </div>
             ) : isSelectedExecuted ? (
-              <div className="bg-emerald-950/20 border border-emerald-900/40 p-3 rounded-lg text-emerald-300 text-xs">
+              <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-lg text-emerald-800 text-xs">
                 Stage {currentSelectedStage.num} executed cleanly. No critical anomaly triggers flagged in this layer.
               </div>
             ) : (
-              <div className="bg-amber-950/20 border border-amber-900/40 p-3 rounded-lg text-amber-300 text-xs">
+              <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg text-amber-800 text-xs">
                 ⚡ <strong>Early Exit Triggered in earlier stage!</strong> Stage {currentSelectedStage.num} analysis was bypassed to save computational cost and network egress latency.
               </div>
             )}
 
             {/* Additional details for Stage 4 brand match */}
             {currentSelectedStage.id === 'stage_4' && currentSelectedStage.brandMatch && currentSelectedStage.brandMatch !== 'none' && (
-              <div className="bg-purple-950/30 border border-purple-800/50 p-3 rounded-lg text-purple-200 mt-2 flex items-center space-x-2">
-                <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+              <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg text-blue-900 mt-2 flex items-center space-x-2">
+                <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
                 <div>
-                  <strong>FAISS Brand Cosine Match:</strong> Impersonating <span className="text-amber-400 font-bold uppercase">{currentSelectedStage.brandMatch}</span> template!
+                  <strong>FAISS Brand Cosine Match:</strong> Impersonating <span className="text-blue-700 font-bold uppercase">{currentSelectedStage.brandMatch}</span> template!
                 </div>
               </div>
             )}

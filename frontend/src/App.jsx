@@ -31,7 +31,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 font-sans selection:bg-cyan-500 selection:text-gray-950">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-600 selection:text-white">
       {/* Top Navbar */}
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
@@ -39,14 +39,14 @@ export default function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Error Banner */}
         {errorMsg && (
-          <div className="bg-red-950/80 border border-red-800 text-red-200 text-xs font-mono p-4 rounded-xl flex items-center justify-between shadow-lg">
+          <div className="bg-red-50 border border-red-200 text-red-800 text-xs font-mono p-4 rounded-xl flex items-center justify-between shadow-sm">
             <div className="flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
               <span>{errorMsg}</span>
             </div>
             <button
               onClick={() => setErrorMsg(null)}
-              className="text-gray-400 hover:text-white font-bold ml-4"
+              className="text-slate-400 hover:text-slate-800 font-bold ml-4"
             >
               ✕
             </button>
@@ -81,7 +81,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-900 py-6 mt-16 text-center text-xs text-gray-600 font-mono">
+      <footer className="border-t border-slate-200 py-6 mt-16 text-center text-xs text-slate-500 font-mono bg-white">
         <p>PhishGuard © 2026 — Intelligent Phishing Website Detection Framework</p>
       </footer>
     </div>

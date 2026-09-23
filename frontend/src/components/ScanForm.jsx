@@ -49,10 +49,10 @@ export default function ScanForm({ onScanStart, onScanComplete, onError }) {
   };
 
   return (
-    <div className="bg-gray-900/90 border border-gray-800 rounded-2xl p-6 shadow-2xl backdrop-blur-xl">
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
       <div className="flex items-center space-x-3 mb-4">
-        <Globe className="w-5 h-5 text-cyan-400" />
-        <h2 className="text-lg font-bold text-white tracking-wide">Stage-Wise Adaptive URL Inspection</h2>
+        <Globe className="w-5 h-5 text-blue-600" />
+        <h2 className="text-lg font-bold text-slate-900 tracking-wide">Stage-Wise Adaptive URL Inspection</h2>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -63,12 +63,12 @@ export default function ScanForm({ onScanStart, onScanComplete, onError }) {
             onChange={(e) => setUrl(e.target.value)}
             placeholder="Enter website URL to analyze (e.g., https://paypal-security-update.com)"
             required
-            className="w-full bg-gray-950 text-white placeholder-gray-500 text-sm font-mono rounded-xl px-4 py-3.5 border border-gray-800 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all pr-32"
+            className="w-full bg-slate-50 text-slate-900 placeholder-slate-400 text-sm font-mono rounded-xl px-4 py-3.5 border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600/30 focus:border-blue-600 transition-all pr-32 shadow-inner"
           />
           <button
             type="submit"
             disabled={loading || !url.trim()}
-            className="absolute right-2 top-2 bottom-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-sm px-5 rounded-lg flex items-center space-x-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-cyan-500/20"
+            className="absolute right-2 top-2 bottom-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-5 rounded-lg flex items-center space-x-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-600/20"
           >
             {loading ? (
               <>
@@ -87,26 +87,26 @@ export default function ScanForm({ onScanStart, onScanComplete, onError }) {
         {/* Options & Quick Presets */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2">
           {/* Force Full Analysis Toggle */}
-          <label className="flex items-center space-x-2 cursor-pointer text-xs font-mono text-gray-400 hover:text-gray-300">
+          <label className="flex items-center space-x-2 cursor-pointer text-xs font-mono text-slate-600 hover:text-slate-900">
             <input
               type="checkbox"
               checked={forceFull}
               onChange={(e) => setForceFull(e.target.checked)}
-              className="w-4 h-4 rounded bg-gray-950 border-gray-700 text-cyan-500 focus:ring-cyan-500/50"
+              className="w-4 h-4 rounded bg-slate-100 border-slate-300 text-blue-600 focus:ring-blue-500"
             />
-            <Zap className={`w-3.5 h-3.5 ${forceFull ? 'text-amber-400' : 'text-gray-500'}`} />
+            <Zap className={`w-3.5 h-3.5 ${forceFull ? 'text-amber-500' : 'text-slate-400'}`} />
             <span>Force Full Multimodal Analysis (Bypass Early Stopping)</span>
           </label>
 
           {/* Preset Buttons */}
           <div className="flex items-center space-x-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-            <span className="text-xs text-gray-500 font-mono whitespace-nowrap">Presets:</span>
+            <span className="text-xs text-slate-500 font-mono whitespace-nowrap">Presets:</span>
             {sampleUrls.map((s, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => setSample(s.url)}
-                className="text-xs bg-gray-800/60 hover:bg-gray-800 text-gray-300 hover:text-white px-2.5 py-1 rounded-md border border-gray-700/50 whitespace-nowrap font-mono transition-colors"
+                className="text-xs bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 px-2.5 py-1 rounded-md border border-slate-200 whitespace-nowrap font-mono transition-colors font-medium"
               >
                 {s.label}
               </button>
