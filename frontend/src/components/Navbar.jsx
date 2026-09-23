@@ -12,9 +12,6 @@ export default function Navbar({ activeTab, setActiveTab }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo & Title */}
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('scanner')}>
-          <div className="bg-gradient-to-tr from-cyan-500 to-blue-600 p-2 rounded-xl shadow-lg shadow-cyan-500/20">
-            <ShieldAlert className="w-6 h-6 text-white" />
-          </div>
           <div>
             <div className="flex items-center space-x-2">
               <span className="font-extrabold text-xl tracking-tight text-white font-mono">PhishGuard</span>
