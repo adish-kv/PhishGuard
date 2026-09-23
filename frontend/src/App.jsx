@@ -3,7 +3,6 @@ import Navbar from './components/Navbar';
 import ScanForm from './components/ScanForm';
 import RiskMeter from './components/RiskMeter';
 import StageProgress from './components/StageProgress';
-import ModalityChart from './components/ModalityChart';
 import FeatureExplainer from './components/FeatureExplainer';
 import HistoryTable from './components/HistoryTable';
 import { AlertCircle } from 'lucide-react';
@@ -72,15 +71,8 @@ export default function App() {
                 {/* 2. 4-Stage Execution Waterfall */}
                 <StageProgress result={scanResult} />
 
-                {/* 3. Modality Weights & SHAP Feature Explainer */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                  <div className="lg:col-span-5">
-                    <ModalityChart explanation={scanResult.explanation} />
-                  </div>
-                  <div className="lg:col-span-7">
-                    <FeatureExplainer result={scanResult} />
-                  </div>
-                </div>
+                {/* 3. SHAP Feature Explainer */}
+                <FeatureExplainer result={scanResult} />
               </div>
             )}
           </div>
