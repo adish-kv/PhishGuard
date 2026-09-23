@@ -74,7 +74,11 @@ async def analyze_url_endpoint(req: AnalyzeRequest) -> AnalyzeResponse:
     now_iso = datetime.now(timezone.utc).isoformat()
 
     try:
-        res = await engine.analyze_url(req.url, sample_id=req_id)
+        res = await engine.analyze_url(
+            req.url,
+            sample_id=req_id,
+            force_full_analysis=req.force_full_analysis,
+        )
 
         response_data = {
             "request_id": req_id,

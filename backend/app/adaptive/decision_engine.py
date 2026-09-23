@@ -110,12 +110,18 @@ class AdaptiveDecisionEngine:
         self.ocr_analyzer = OCRAnalyzer()
         self.visual_analyzer = VisualAnalyzer()
 
-    async def analyze_url(self, url: str, sample_id: str | None = None) -> AdaptiveDecisionResult:
+    async def analyze_url(
+        self,
+        url: str,
+        sample_id: str | None = None,
+        force_full_analysis: bool = False,
+    ) -> AdaptiveDecisionResult:
         """Execute adaptive staged analysis pipeline.
 
         Args:
             url: Input target URL.
             sample_id: Optional sample identifier.
+            force_full_analysis: If True, bypasses early stopping thresholds and evaluates all 4 stages.
 
         Returns:
             AdaptiveDecisionResult container.
@@ -172,7 +178,7 @@ class AdaptiveDecisionEngine:
         # Compute Stage 1 heuristic score P1
         p1, s1_reasons = self._evaluate_stage1_heuristics(url_res, ssl_res, dom_res)
 
-        if p1 <= self.stage1_low or p1 >= self.stage1_high:
+        if not force_full_analysis and (p1 <= self.stage1_low or p1 >= self.stage1_high):
             # Early Stop at Stage 1!
             total_time = round((time.perf_counter() - start_total) * 1000, 3)
             pred = "phishing" if p1 >= self.stage1_high else "benign"
@@ -212,7 +218,7 @@ class AdaptiveDecisionEngine:
 
         p2, s2_reasons = self._evaluate_stage2_heuristics(p1, html_res)
 
-        if p2 <= self.stage2_low or p2 >= self.stage2_high:
+        if not force_full_analysis and (p2 <= self.stage2_low or p2 >= self.stage2_high):
             # Early Stop at Stage 2!
             total_time = round((time.perf_counter() - start_total) * 1000, 3)
             pred = "phishing" if p2 >= self.stage2_high else "benign"
