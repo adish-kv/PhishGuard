@@ -3,7 +3,6 @@ import Navbar from './components/Navbar';
 import ScanForm from './components/ScanForm';
 import RiskMeter from './components/RiskMeter';
 import StageProgress from './components/StageProgress';
-import FeatureExplainer from './components/FeatureExplainer';
 import HistoryTable from './components/HistoryTable';
 import { AlertCircle } from 'lucide-react';
 
@@ -70,9 +69,6 @@ export default function App() {
 
                 {/* 2. 4-Stage Execution Waterfall */}
                 <StageProgress result={scanResult} />
-
-                {/* 3. SHAP Feature Explainer */}
-                <FeatureExplainer result={scanResult} />
               </div>
             )}
           </div>
