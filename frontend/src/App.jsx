@@ -5,9 +5,7 @@ import RiskMeter from './components/RiskMeter';
 import StageProgress from './components/StageProgress';
 import ModalityChart from './components/ModalityChart';
 import FeatureExplainer from './components/FeatureExplainer';
-import ExperimentsExplorer from './components/ExperimentsExplorer';
 import HistoryTable from './components/HistoryTable';
-import AboutPaper from './components/AboutPaper';
 import { AlertCircle } from 'lucide-react';
 
 export default function App() {
@@ -92,18 +90,11 @@ export default function App() {
         {activeTab === 'history' && (
           <HistoryTable onSelectScan={handleSelectHistoryScan} />
         )}
-
-        {/* Tab 3: Research Experiments */}
-        {activeTab === 'experiments' && <ExperimentsExplorer />}
-
-        {/* Tab 4: Paper Specs */}
-        {activeTab === 'about' && <AboutPaper />}
       </main>
 
       {/* Footer */}
       <footer className="border-t border-gray-900 py-6 mt-16 text-center text-xs text-gray-600 font-mono">
         <p>PhishGuard © 2026 — Intelligent Phishing Website Detection Framework</p>
-        <p className="text-gray-700 mt-1">Research Artifact for IEEE/ACM Cybersecurity Publication</p>
       </footer>
     </div>
   );

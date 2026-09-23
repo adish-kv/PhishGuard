@@ -1,21 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { ShieldAlert, Activity, History, BarChart3, Info, CheckCircle2, XCircle } from 'lucide-react';
+import React from 'react';
+import { ShieldAlert, History } from 'lucide-react';
 
 export default function Navbar({ activeTab, setActiveTab }) {
-  const [health, setHealth] = useState(null);
-
-  useEffect(() => {
-    fetch('/api/v1/health')
-      .then((res) => res.json())
-      .then((data) => setHealth(data))
-      .catch(() => setHealth(null));
-  }, []);
-
   const tabs = [
     { id: 'scanner', label: 'URL Scanner', icon: ShieldAlert },
     { id: 'history', label: 'Scan History', icon: History },
-    { id: 'experiments', label: 'Experiments 1-7', icon: BarChart3 },
-    { id: 'about', label: 'Paper Specs', icon: Info },
   ];
 
   return (
@@ -55,28 +44,11 @@ export default function Navbar({ activeTab, setActiveTab }) {
                 }`}
               >
                 <Icon className="w-4 h-4" />
-                <span className="hidden md:inline">{tab.label}</span>
+                <span className="inline">{tab.label}</span>
               </button>
             );
           })}
         </nav>
-
-        {/* Health Badge */}
-        <div className="hidden lg:flex items-center space-x-2 text-xs font-mono bg-gray-900 px-3 py-1.5 rounded-full border border-gray-800">
-          <Activity className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-          <span className="text-gray-400">Backend:</span>
-          {health ? (
-            <span className="flex items-center text-emerald-400 font-semibold">
-              <CheckCircle2 className="w-3 h-3 mr-1" />
-              Online (v{health.version})
-            </span>
-          ) : (
-            <span className="flex items-center text-amber-400 font-semibold">
-              <XCircle className="w-3 h-3 mr-1" />
-              Connecting...
-            </span>
-          )}
-        </div>
       </div>
     </header>
   );
