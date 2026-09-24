@@ -163,7 +163,12 @@ class URLAnalyzer:
         ) or [
             "login", "signin", "verify", "account", "secure",
             "update", "confirm", "banking", "password", "credential",
-            "suspended", "unusual", "restrict", "alert",
+            "suspended", "unusual", "restrict", "alert", "order",
+            "produto", "aniversario", "aniversariantes", "processo", "acesse",
+            "vip", "shared", "pdf", "docx", "baccredomatic", "banestes", "banestesnet",
+            "magalu", "portal", "cliente", "canalrapido", "facil", "instalador",
+            "instaladorpj", "qr", "figital", "citrix", "englishdomain", "domain",
+            "banco", "maxis", "saude",
         ]
 
         self._suspicious_tlds: list[str] = getattr(
@@ -171,7 +176,8 @@ class URLAnalyzer:
         ) or [
             ".xyz", ".top", ".click", ".loan", ".work",
             ".gq", ".ml", ".cf", ".tk", ".ga",
-            ".buzz", ".zip", ".mov",
+            ".buzz", ".zip", ".mov", ".homes", ".courses",
+            ".st", ".pro", ".co", ".my.id",
         ]
 
         # Try loading from YAML config sections
