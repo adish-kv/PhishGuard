@@ -31,7 +31,7 @@ export default function RiskMeter({ result }) {
     >
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
         {/* Main Verdict Badge */}
-        <div className="md:col-span-5 flex items-center space-x-4 border-b md:border-b-0 md:border-r border-slate-200/80 pb-4 md:pb-0 md:pr-6">
+        <div className="md:col-span-7 flex items-center space-x-4 border-b md:border-b-0 md:border-r border-slate-200/80 pb-4 md:pb-0 md:pr-6">
           <div
             className={`p-3.5 rounded-2xl border ${
               isPhishing
@@ -62,32 +62,8 @@ export default function RiskMeter({ result }) {
           </div>
         </div>
 
-        {/* Confidence Progress Meter */}
-        <div className="md:col-span-4 space-y-2">
-          <div className="flex justify-between items-center text-xs font-mono">
-            <span className="text-slate-600 font-medium">Model Confidence</span>
-            <span className={`font-bold ${isPhishing ? 'text-red-700' : 'text-emerald-700'}`}>
-              {confidencePct}%
-            </span>
-          </div>
-          <div className="w-full bg-slate-200 h-3 rounded-full overflow-hidden border border-slate-300 p-0.5">
-            <div
-              className={`h-full rounded-full transition-all duration-700 ${
-                isPhishing
-                  ? 'bg-gradient-to-r from-orange-500 to-red-600'
-                  : 'bg-gradient-to-r from-teal-500 to-emerald-600'
-              }`}
-              style={{ width: `${confidencePct}%` }}
-            />
-          </div>
-          <div className="flex justify-between text-[10px] text-slate-500 font-mono">
-            <span>0% (Uncertain)</span>
-            <span>100% (Certain)</span>
-          </div>
-        </div>
-
         {/* Adaptive Engine Latency & Stage Metrics */}
-        <div className="md:col-span-3 grid grid-cols-2 gap-3 text-xs font-mono bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+        <div className="md:col-span-5 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 gap-3 text-xs font-mono bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
           <div>
             <div className="text-slate-500 flex items-center space-x-1">
               <Clock className="w-3 h-3 text-blue-600" />
