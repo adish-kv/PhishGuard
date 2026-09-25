@@ -245,48 +245,45 @@ class AdaptiveDecisionEngine:
             )
 
         # ═══════════════════════════════════════════
-        # STAGE 3 & 4: Screenshot + OCR + Visual CLIP + PyTorch Fusion
+        # STAGE 3: Screenshot + EasyOCR Text Analysis
         # ═══════════════════════════════════════════
-        t4_start = time.perf_counter()
+        t3_start = time.perf_counter()
         sc_res = await self.screenshot_service.capture_screenshot(url, sample_id=sample_id)
         if sc_res.errors:
             errors.extend(sc_res.errors)
 
         if sc_res.success and sc_res.screenshot_path:
             ocr_res = self.ocr_analyzer.extract_features(sc_res.screenshot_path)
-            vis_res = self.visual_analyzer.extract_features(sc_res.screenshot_path, sample_id=sample_id)
         else:
             ocr_res = self.ocr_analyzer.extract_features("non_existent.png")
-            vis_res = self.visual_analyzer.extract_features("non_existent.png")
 
-        stage_latencies["stage4_ms"] = round((time.perf_counter() - t4_start) * 1000, 3)
+        stage_latencies["stage3_ms"] = round((time.perf_counter() - t3_start) * 1000, 3)
 
         raw_metrics["ocr_token_count"] = int(ocr_res.features.get("total_words", 48))
         raw_metrics["ocr_confidence"] = round(float(ocr_res.features.get("mean_confidence", 0.964)) * 100, 1)
-        raw_metrics["faiss_max_similarity"] = round(float(vis_res.max_brand_similarity), 3)
 
-        p4, s4_reasons = self._evaluate_stage4_heuristics(p2, ocr_res, vis_res)
+        p3, s3_reasons = self._evaluate_stage3_heuristics(p2, ocr_res)
         total_time = round((time.perf_counter() - start_total) * 1000, 3)
-        pred = "phishing" if p4 >= 0.50 else "benign"
-        conf = p4 if pred == "phishing" else (1.0 - p4)
+        pred = "phishing" if p3 >= 0.50 else "benign"
+        conf = p3 if pred == "phishing" else (1.0 - p3)
 
         return AdaptiveDecisionResult(
             url=url,
             prediction=pred,
             confidence=round(conf, 4),
-            risk_level=self._get_risk_level(p4),
-            stage_reached="stage4",
-            modalities_used=6,
+            risk_level=self._get_risk_level(p3),
+            stage_reached="stage3",
+            modalities_used=5,
             early_stopped=False,
             total_latency_ms=total_time,
             stage_latencies_ms=stage_latencies,
             explanation={
                 "stage1_reasons": s1_reasons,
                 "stage2_reasons": s2_reasons,
-                "stage4_reasons": s4_reasons,
-                "final_probability": round(p4, 4),
+                "stage3_reasons": s3_reasons,
+                "stage3_probability": round(p3, 4),
+                "final_probability": round(p3, 4),
                 "raw_metrics": raw_metrics,
-                "brand_impersonation": vis_res.nearest_brand if vis_res.max_brand_similarity >= 0.85 else "none",
             },
             errors=errors,
         )
@@ -401,20 +398,16 @@ class AdaptiveDecisionEngine:
         return min(max(score, 0.01), 0.99), reasons
 
     @staticmethod
-    def _evaluate_stage4_heuristics(p2: float, ocr_res: Any, vis_res: Any) -> tuple[float, list[str]]:
-        """Re-evaluate probability with Stage 4 OCR & Visual CLIP features."""
+    def _evaluate_stage3_heuristics(p2: float, ocr_res: Any) -> tuple[float, list[str]]:
+        """Re-evaluate probability with Stage 3 Screenshot & EasyOCR text features."""
         score = p2
         reasons = []
 
         of = ocr_res.features
-        vf = vis_res.features
 
         if of.get("suspicious_login_terms", 0) > 0:
-            score += 0.10
+            score += 0.15
             reasons.append("OCR detected sensitive login text in screenshot")
-        if vf.get("is_visual_brand_impersonation"):
-            score += 0.25
-            reasons.append(f"High visual similarity to brand template ({vis_res.nearest_brand})")
 
         # Preserve / elevate suspicious score when multimodal captures time out
         if p2 >= 0.35:

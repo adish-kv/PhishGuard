@@ -90,7 +90,7 @@ export default function RiskMeter({ result }) {
               <span>Modalities</span>
             </div>
             <div className="text-sm font-bold text-slate-800 mt-0.5">
-              {result.modalities_used} / 6 Active
+              {result.modalities_used} / 5 Active
             </div>
           </div>
 

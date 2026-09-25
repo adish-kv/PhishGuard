@@ -214,60 +214,9 @@ export default function StageProgress({ result }) {
         }
       ],
       reasons: exp.stage3_reasons || [],
-      probability: exp.stage3_probability,
+      probability: exp.stage3_probability || exp.final_probability,
       icon: Cpu,
       color: 'purple'
-    },
-    {
-      id: 'stage_4',
-      num: 4,
-      name: 'CLIP Visual & FAISS Brand Matching',
-      modalities: ['Visual ViT-B/32 (512d vector)', 'FAISS Cosine Brand Index'],
-      cost: 'Cost: ~200-500ms (Vision Neural Net)',
-      thresholdRule: 'Full Multimodal Upper Bound Classifier (PyTorch 192d Subnet)',
-      detailedFeatures: [
-        {
-          name: 'Playwright Sandboxed Chromium Screenshot',
-          extractedBenign: 'Resolution: 1280x720 PNG | Viewport Render Time: 142 ms | Status: Captured',
-          extractedPhish: 'Resolution: 1280x720 PNG | Viewport Render Time: 168 ms | Status: Captured',
-          checkBenign: 'Page rendered cleanly. Visual frame passed to CLIP vision pipeline.',
-          checkPhish: 'Page rendered cleanly. Visual frame passed to CLIP vision pipeline.',
-          badgeBenign: '1280x720 (142ms)',
-          badgePhish: '1280x720 (168ms)'
-        },
-        {
-          name: 'OpenAI CLIP ViT-B/32 Visual Vector',
-          extractedBenign: 'Dimensions: 512d | Tensor Norm: L2 Normalized (1.000) | Precision: Float32',
-          extractedPhish: 'Dimensions: 512d | Tensor Norm: L2 Normalized (1.000) | Precision: Float32',
-          checkBenign: '512-dim visual feature tensor normalized for similarity search.',
-          checkPhish: '512-dim visual feature tensor normalized for similarity search.',
-          badgeBenign: '512d Vector Norm: 1.0',
-          badgePhish: '512d Vector Norm: 1.0'
-        },
-        {
-          name: 'FAISS Inner Product Cosine Brand Search',
-          extractedBenign: 'Max Cosine Sim: 0.124 | Threshold: >= 0.850 | Nearest Signature: Generic Web',
-          extractedPhish: 'Max Cosine Sim: 0.942 | Threshold: >= 0.850 | Nearest Signature: PayPal Login Template',
-          checkBenign: 'Low cosine similarity (< 0.85) to protected brand templates.',
-          checkPhish: 'High cosine similarity (>= 0.85) matching protected brand template.',
-          badgeBenign: 'Cosine Sim: 0.124',
-          badgePhish: 'Cosine Sim: 0.942'
-        },
-        {
-          name: 'PyTorch Multimodal Concatenated Classifier',
-          extractedBenign: 'Input Dimensions: 192d Fused Vector | Neural Prob: 0.002 | Class: Benign',
-          extractedPhish: 'Input Dimensions: 192d Fused Vector | Neural Prob: 0.998 | Class: Phishing',
-          checkBenign: 'Upper bound multimodal probability below risk threshold.',
-          checkPhish: 'Upper bound multimodal probability confirms phishing classification.',
-          badgeBenign: 'Probability: 0.002',
-          badgePhish: 'Probability: 0.998'
-        }
-      ],
-      reasons: exp.stage4_reasons || [],
-      probability: exp.final_probability,
-      brandMatch: exp.brand_impersonation,
-      icon: Image,
-      color: 'pink'
     }
   ];
 

@@ -52,8 +52,8 @@ class TestAdaptiveDecisionEngine:
         """Verify suspicious URL with raw IP and keywords early-stops at Stage 1 (3 modalities used)."""
         url_safe_test = "http://verify-login-password-update-account.xyz/login"
         result = await engine.analyze_url(url_safe_test)
-        assert result.stage_reached in ["stage1", "stage2", "stage4"]
-        assert result.modalities_used in [3, 4, 6]
+        assert result.stage_reached in ["stage1", "stage2", "stage3"]
+        assert result.modalities_used in [3, 4, 5]
 
     async def test_benign_url_stage1_early_stop(self, engine: AdaptiveDecisionEngine) -> None:
         """Verify clean HTTPS URL (google.com) early-stops at Stage 1 or Stage 2."""
