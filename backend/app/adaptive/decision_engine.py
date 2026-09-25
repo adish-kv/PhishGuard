@@ -31,10 +31,12 @@ Key Metrics Tracked:
 from __future__ import annotations
 
 import asyncio
+from pathlib import Path
 import time
 from dataclasses import dataclass, field
 from typing import Any
 
+import joblib
 import httpx
 import numpy as np
 import tldextract
@@ -49,6 +51,7 @@ from backend.app.analyzers.visual_analyzer import VisualAnalyzer
 from backend.app.core.config import get_settings
 from backend.app.core.logging import get_logger
 from backend.app.core.security import SSRFProtector
+from backend.app.core.typosquat_engine import TyposquatEngine
 
 logger = get_logger(__name__)
 
@@ -111,6 +114,20 @@ class AdaptiveDecisionEngine:
         self.screenshot_service = ScreenshotService()
         self.ocr_analyzer = OCRAnalyzer()
         self.visual_analyzer = VisualAnalyzer()
+        self.typosquat_engine = TyposquatEngine()
+
+        # Load Stage 1 GBDT / RandomForest ML Model weights
+        self.stage1_ml_model = None
+        self.stage1_scaler = None
+        try:
+            model_path = Path("ml/models/saved/stage1_ml_model.joblib")
+            scaler_path = Path("ml/models/saved/stage1_scaler.joblib")
+            if model_path.exists() and scaler_path.exists():
+                self.stage1_ml_model = joblib.load(model_path)
+                self.stage1_scaler = joblib.load(scaler_path)
+                logger.info("Successfully loaded Stage 1 ML GBDT Model & Scaler.")
+        except Exception as e:
+            logger.warning(f"Could not load Stage 1 ML model weights: {e}")
 
     async def analyze_url(
         self,
@@ -296,9 +313,8 @@ class AdaptiveDecisionEngine:
             errors=errors,
         )
 
-    @staticmethod
-    def _evaluate_stage1_heuristics(url_res: Any, ssl_res: Any, dom_res: Any) -> tuple[float, list[str]]:
-        """Calculate Stage 1 score based on 38 Stage 1 features."""
+    def _evaluate_stage1_heuristics(self, url_res: Any, ssl_res: Any, dom_res: Any) -> tuple[float, list[str]]:
+        """Calculate Stage 1 score based on Stage 1 features, Typosquatting Engine, and GBDT ML Model."""
         score = 0.10  # Default low risk base score
         reasons = []
 
@@ -307,6 +323,24 @@ class AdaptiveDecisionEngine:
         df = dom_res.features
         raw_url = getattr(url_res, "url", "")
 
+        # 0. Zero-Day Typosquatting Engine Check (Levenshtein Edit Distance)
+        typosquat_res = self.typosquat_engine.check_url(raw_url)
+        if typosquat_res.is_typosquat:
+            score += 0.40
+            reasons.append(typosquat_res.reason)
+
+        # 1. Stage 1 ML Model Inference (RandomForest / GBDT)
+        if self.stage1_ml_model is not None and self.stage1_scaler is not None:
+            try:
+                vector = np.array([url_res.to_vector()], dtype=np.float32)
+                vector_scaled = self.stage1_scaler.transform(vector)
+                ml_prob = float(self.stage1_ml_model.predict_proba(vector_scaled)[0][1])
+                if ml_prob >= 0.50:
+                    score = max(score, ml_prob)
+                    reasons.append(f"Stage 1 ML GBDT model predicts phishing probability ({round(ml_prob * 100, 1)}%)")
+            except Exception as e:
+                logger.warning(f"Stage 1 ML model inference error: {e}")
+
         # Extract TLD structure for domain & subdomain analysis
         extracted = tldextract.extract(raw_url)
         subdomain = extracted.subdomain.lower()
@@ -314,7 +348,7 @@ class AdaptiveDecisionEngine:
         root_domain = f"{extracted.domain}.{extracted.suffix}".lower()
         full_host = f"{subdomain}.{root_domain}".strip(".")
 
-        # 1. IP & Obfuscation
+        # 2. IP & Obfuscation
         if uf.get("has_ip"):
             score += 0.35
             reasons.append("URL uses raw IP address instead of domain name")
@@ -325,7 +359,7 @@ class AdaptiveDecisionEngine:
             score += 0.25
             reasons.append("URL uses high-risk suspicious TLD extension")
 
-        # 2. Free Hosting & Subdomain Brand Impersonation Mismatch
+        # 3. Free Hosting & Subdomain Brand Impersonation Mismatch
         free_hosts = {
             "github.io", "webnode.page", "webnode.es", "webnode.cz", "webnode.com",
             "netlify.app", "vercel.app", "firebaseapp.com", "000webhostapp.com",
@@ -348,7 +382,7 @@ class AdaptiveDecisionEngine:
             score += 0.35
             reasons.append(f"Subdomain brand impersonation mismatch (target token '{matched_brand}' on host '{root_domain}')")
 
-        # 3. Keywords & Entropy
+        # 4. Keywords & Entropy
         if uf.get("suspicious_keyword_count", 0) >= 1:
             score += 0.25
             reasons.append("URL contains sensitive phishing/credential harvesting keywords")
@@ -359,7 +393,7 @@ class AdaptiveDecisionEngine:
             score += 0.20
             reasons.append("High character entropy / hyphenated typosquatting structure")
 
-        # 4. Path & Query heuristics (ad redirects, deep directories)
+        # 5. Path & Query heuristics (ad redirects, deep directories)
         path_str = raw_url.split("?", 1)[0]
         if path_str.count("/") >= 4 or "englishdomain" in raw_url.lower() or "qr-figital" in raw_url.lower():
             score += 0.20
@@ -368,7 +402,7 @@ class AdaptiveDecisionEngine:
             score += 0.15
             reasons.append("Ad campaign tracking / redirection parameter present in URL query")
 
-        # 5. SSL & Domain WHOIS
+        # 6. SSL & Domain WHOIS
         if sf.get("https_available") is False:
             score += 0.20
             reasons.append("No HTTPS SSL connection available (HTTP insecure connection)")
