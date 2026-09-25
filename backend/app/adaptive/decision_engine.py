@@ -35,6 +35,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
+import httpx
 import numpy as np
 import tldextract
 
@@ -207,9 +208,16 @@ class AdaptiveDecisionEngine:
         # STAGE 2: Fetch HTML DOM features (28d)
         # ═══════════════════════════════════════════
         t2_start = time.perf_counter()
-        # Simulated HTML fetch or lightweight static parse
-        sample_html = f"<html><head><title>{url}</title></head><body><a href='{url}'>Link</a></body></html>"
-        html_res = self.html_analyzer.extract_features(sample_html, url=url)
+        target_html = f"<html><head><title>{url}</title></head><body><a href='{url}'>Link</a></body></html>"
+        try:
+            async with httpx.AsyncClient(timeout=2.5, follow_redirects=True, verify=False) as client:
+                response = await client.get(url, headers={"User-Agent": "PhishGuard/2.0 Security Scanner"})
+                if response.status_code == 200 and response.text:
+                    target_html = response.text
+        except Exception as e:
+            logger.warning(f"Stage 2 live HTML fetch timeout/error for {url}: {e}")
+
+        html_res = self.html_analyzer.extract_features(target_html, url=url)
         stage_latencies["stage2_ms"] = round((time.perf_counter() - t2_start) * 1000, 3)
 
         raw_metrics["num_password_fields"] = int(html_res.features.get("num_password_fields", 0))
