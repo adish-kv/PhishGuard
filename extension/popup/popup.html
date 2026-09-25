@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PhishGuard AI</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="header">
+    <div class="brand">
+      <div class="shield-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="title">PhishGuard</h1>
+        <p class="subtitle">AI Phishing Protection</p>
+      </div>
+    </div>
+    <div class="status-badge" id="statusBadge">Active</div>
+  </div>
+
+  <div class="toggle-container">
+    <span>Real-Time Auto Scanning</span>
+    <label class="switch">
+      <input type="checkbox" id="autoProtectToggle" checked>
+      <span class="slider round"></span>
+    </label>
+  </div>
+
+  <div class="section-title">Manual URL Analysis</div>
+  <div class="input-group">
+    <input type="text" id="urlInput" placeholder="Enter target URL (e.g. pypal-login.com)" />
+    <button id="scanBtn">Scan</button>
+  </div>
+
+  <div id="resultBox" class="result-box hidden">
+    <div class="result-header">
+      <span id="verdictText" class="verdict">SAFE</span>
+      <span id="riskScore" class="risk-score">0 / 100</span>
+    </div>
+    <div id="resultDetails" class="result-details"></div>
+  </div>
+
+  <div class="section-title" style="margin-top: 16px;">Recent Scans</div>
+  <div id="historyList" class="history-list">
+    <div class="empty-history">No recent scans recorded.</div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
