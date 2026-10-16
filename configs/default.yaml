@@ -125,6 +125,8 @@ adaptive:
   stage1_high_threshold: 0.85
   stage2_low_threshold: 0.10
   stage2_high_threshold: 0.90
+  stage3_low_threshold: 0.05
+  stage3_high_threshold: 0.95
   uncertainty_threshold: 0.3
   enable_html_stage: true
   enable_visual_stage: true

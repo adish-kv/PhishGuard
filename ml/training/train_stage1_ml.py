@@ -73,29 +73,9 @@ def generate_stage1_dataset(num_samples: int = 2000, seed: int = 42) -> tuple[np
 
 
 def train_and_save_stage1_model() -> None:
-    """Train RandomForest Stage 1 model and serialize to disk."""
-    print("Generating Stage 1 training dataset...")
-    X, y = generate_stage1_dataset(num_samples=2000, seed=42)
-
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-
-    print("Fitting RandomForest Stage 1 Classifier...")
-    model = RandomForestClassifier(n_estimators=100, max_depth=8, random_state=42)
-    model.fit(X_scaled, y)
-
-    saved_dir = Path("ml/models/saved")
-    saved_dir.mkdir(parents=True, exist_ok=True)
-
-    model_path = saved_dir / "stage1_ml_model.joblib"
-    scaler_path = saved_dir / "stage1_scaler.joblib"
-
-    joblib.dump(model, model_path)
-    joblib.dump(scaler, scaler_path)
-
-    print(f"Stage 1 ML model trained successfully!")
-    print(f"  Model saved to: {model_path}")
-    print(f"  Scaler saved to: {scaler_path}")
+    """Train GBDT Stage 1 model matching report Section 3.7 and serialize to disk."""
+    from ml.training.train_real_phish_model import train_phish_model
+    train_phish_model()
 
 
 if __name__ == "__main__":

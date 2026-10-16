@@ -13,9 +13,13 @@ from __future__ import annotations
 
 import asyncio
 import json
+import sys
 import time
 from pathlib import Path
 from typing import Any
+
+# Ensure project root is in sys.path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from backend.app.analyzers.url_analyzer import URLAnalyzer
 from backend.app.core.config import PROJECT_ROOT

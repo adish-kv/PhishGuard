@@ -122,6 +122,8 @@ class AdaptiveConfig(BaseConfig):
     )
     stage2_low_threshold: float = Field(default=0.10, ge=0.0, le=1.0)
     stage2_high_threshold: float = Field(default=0.90, ge=0.0, le=1.0)
+    stage3_low_threshold: float = Field(default=0.05, ge=0.0, le=1.0)
+    stage3_high_threshold: float = Field(default=0.95, ge=0.0, le=1.0)
     uncertainty_threshold: float = Field(
         default=0.3, ge=0.0, le=1.0,
         description="Entropy threshold for requesting additional modalities",

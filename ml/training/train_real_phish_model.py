@@ -142,7 +142,7 @@ def train_phish_model() -> None:
     X_test_scaled = scaler.transform(X_test)
 
     print("\nFitting Gradient Boosting Classifier (GBDT)...")
-    gbdt = GradientBoostingClassifier(n_estimators=150, max_depth=6, learning_rate=0.1, random_state=42)
+    gbdt = GradientBoostingClassifier(n_estimators=150, max_depth=5, learning_rate=0.1, random_state=42)
     gbdt.fit(X_train_scaled, y_train)
 
     y_pred = gbdt.predict(X_test_scaled)

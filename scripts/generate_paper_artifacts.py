@@ -17,7 +17,11 @@ Reads empirical research results from `research/results/` and generates:
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
+
+# Ensure project root is in sys.path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -64,6 +68,8 @@ class PaperArtifactsGenerator:
         logger.info("Generating publication figures and LaTeX tables...")
 
         # 1. Figures
+        self.fig_report_dataset_distribution()
+        self.fig_report_feature_dimensionality()
         self.fig1_adaptive_latency()
         self.fig2_ablation_drops()
         self.fig3_temporal_drift()
@@ -76,6 +82,42 @@ class PaperArtifactsGenerator:
         self.table3_ablation_latex()
 
         logger.info("Artifact generation completed successfully.")
+
+    def fig_report_dataset_distribution(self) -> None:
+        """Figure 3 from Report: Class distribution of the PhishGuard evaluation dataset."""
+        fig, ax = plt.subplots(figsize=(6, 5))
+        categories = ["Phishing", "Benign"]
+        counts = [2500, 2500]
+        bars = ax.bar(categories, counts, color="#1f77b4", edgecolor="#0e4b75", width=0.6)
+        for bar in bars:
+            height = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width() / 2, height + 50, f"{int(height)}", ha="center", va="bottom", fontsize=10)
+        ax.set_ylabel("Number of Samples")
+        ax.set_xlabel("Category")
+        ax.set_title("Dataset Distribution")
+        ax.set_ylim(0, 2800)
+        out_path = self.fig_dir / "fig3_class_distribution.png"
+        fig.savefig(out_path, dpi=300)
+        plt.close(fig)
+        logger.info(f"Saved {out_path.name}")
+
+    def fig_report_feature_dimensionality(self) -> None:
+        """Figure 4 from Report: Feature dimensionality across the PhishGuard analysis modalities."""
+        fig, ax = plt.subplots(figsize=(7, 5))
+        modalities = ["URL", "SSL", "WHOIS", "HTML", "OCR", "CLIP"]
+        dims = [22, 10, 6, 28, 13, 512]
+        bars = ax.bar(modalities, dims, color="#1f77b4", edgecolor="#0e4b75", width=0.6)
+        for bar in bars:
+            height = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width() / 2, height + 8, f"{int(height)}", ha="center", va="bottom", fontsize=10)
+        ax.set_xlabel("Feature")
+        ax.set_ylabel("Value")
+        ax.set_title("Feature Extraction / Analysis Time")
+        ax.set_ylim(0, 550)
+        out_path = self.fig_dir / "fig4_feature_dimensionality.png"
+        fig.savefig(out_path, dpi=300)
+        plt.close(fig)
+        logger.info(f"Saved {out_path.name}")
 
     def fig1_adaptive_latency(self) -> None:
         """Fig 1: Mean Latency vs Accuracy (Adaptive System Speedup)."""

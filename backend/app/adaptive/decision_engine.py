@@ -48,7 +48,7 @@ from backend.app.analyzers.screenshot_service import ScreenshotService
 from backend.app.analyzers.ssl_analyzer import SSLAnalyzer
 from backend.app.analyzers.url_analyzer import URLAnalyzer
 from backend.app.analyzers.visual_analyzer import VisualAnalyzer
-from backend.app.core.config import get_settings
+from backend.app.core.config import PROJECT_ROOT, get_settings
 from backend.app.core.logging import get_logger
 from backend.app.core.security import SSRFProtector
 from backend.app.core.typosquat_engine import TyposquatEngine
@@ -105,6 +105,8 @@ class AdaptiveDecisionEngine:
         self.stage1_high = getattr(settings.adaptive, "stage1_high_threshold", 0.85)
         self.stage2_low = getattr(settings.adaptive, "stage2_low_threshold", 0.10)
         self.stage2_high = getattr(settings.adaptive, "stage2_high_threshold", 0.90)
+        self.stage3_low = getattr(settings.adaptive, "stage3_low_threshold", 0.05)
+        self.stage3_high = getattr(settings.adaptive, "stage3_high_threshold", 0.95)
 
         self.ssrf_protector = SSRFProtector()
         self.url_analyzer = URLAnalyzer()
@@ -116,12 +118,15 @@ class AdaptiveDecisionEngine:
         self.visual_analyzer = VisualAnalyzer()
         self.typosquat_engine = TyposquatEngine()
 
-        # Load Stage 1 GBDT / RandomForest ML Model weights
+        # Load Stage 1 GBDT ML Model weights
         self.stage1_ml_model = None
         self.stage1_scaler = None
         try:
-            model_path = Path("ml/models/saved/stage1_ml_model.joblib")
-            scaler_path = Path("ml/models/saved/stage1_scaler.joblib")
+            model_path = PROJECT_ROOT / "ml" / "models" / "saved" / "stage1_ml_model.joblib"
+            scaler_path = PROJECT_ROOT / "ml" / "models" / "saved" / "stage1_scaler.joblib"
+            if not model_path.exists():
+                model_path = Path("ml/models/saved/stage1_ml_model.joblib")
+                scaler_path = Path("ml/models/saved/stage1_scaler.joblib")
             if model_path.exists() and scaler_path.exists():
                 self.stage1_ml_model = joblib.load(model_path)
                 self.stage1_scaler = joblib.load(scaler_path)
@@ -289,8 +294,16 @@ class AdaptiveDecisionEngine:
 
         p3, s3_reasons = self._evaluate_stage3_heuristics(p2, ocr_res)
         total_time = round((time.perf_counter() - start_total) * 1000, 3)
-        pred = "phishing" if p3 >= 0.50 else "benign"
-        conf = p3 if pred == "phishing" else (1.0 - p3)
+        if p3 <= self.stage3_low:
+            pred = "benign"
+            conf = 1.0 - p3
+        elif p3 >= self.stage3_high:
+            pred = "phishing"
+            conf = p3
+        else:
+            # Terminal decision
+            pred = "phishing" if p3 >= 0.50 else "benign"
+            conf = p3 if pred == "phishing" else (1.0 - p3)
 
         return AdaptiveDecisionResult(
             url=url,
