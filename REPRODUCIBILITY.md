@@ -1,6 +1,6 @@
-# Reproducibility Guide for Reviewers
+# Reproducibility Guide for Reviewers & Researchers
 
-This document provides step-by-step instructions to replicate all experimental results, figures, and tables reported in the peer-reviewed research paper:
+This document provides step-by-step instructions to replicate all experimental results, dataset collection, model training, figures, and tables reported in the peer-reviewed research paper:
 
 **"Intelligent Phishing Website Detection Using Visual and URL Hybrid Analysis"**
 
@@ -12,19 +12,18 @@ This document provides step-by-step instructions to replicate all experimental r
 - **CPU**: 4-core x86_64 CPU (8-core recommended)
 - **RAM**: 16 GB minimum
 - **Disk Space**: 10 GB free space
-- **GPU**: Optional (CUDA accelerator speeds up EasyOCR and CLIP vision inference)
+- **GPU**: Optional (CUDA accelerator speeds up EasyOCR and vision inference)
 
 ### Software Requirements
 - **Operating System**: Linux (Ubuntu 22.04+), macOS 13+, or Windows 11
 - **Python**: `3.11.x`
-- **Node.js**: `v20+` & `npm 10+`
+- **Node.js**: `v18+` & `npm 10+`
 - **Docker**: `24.0+` (optional for containerized execution)
 
 ---
 
 ## 2. Environment Setup
 
-### Option A: Local Python Environment
 ```bash
 # Clone the official research repository
 git clone https://github.com/adish-kv/PhishGuard.git
@@ -32,110 +31,155 @@ cd PhishGuard
 
 # Create virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# On Windows:
+venv\Scripts\activate
+# On Linux/macOS:
+# source venv/bin/activate
 
-# Install Python dependencies
+# Install Python dependencies in editable mode
 pip install -e .
 
-# Install Playwright Chromium browser binaries
+# Install Playwright Chromium browser binaries (for Stage 3 screenshots)
 playwright install chromium
 ```
 
-### Option B: Docker Containerized Environment
+---
+
+## 3. Dataset Collection & Provenance
+
+PhishGuard utilizes a verifiable, balanced benchmark of 5,000 genuine URL records:
+- **Phishing (2,500 samples)**: Collected from active verified feeds: OpenPhish community feed and PhishTank verified database (`online-valid.csv`).
+- **Benign (2,500 samples)**: Collected from the Tranco Top-1M consensus ranking of legitimate domains, structured with natural navigational paths and subdomains.
+
+Raw snapshots are preserved separately from the processed dataset to prevent contamination:
+- Raw feeds: `data/raw/phishtank_raw.csv`, `data/raw/openphish_raw.txt`, `data/raw/tranco_raw.csv`
+- Processed dataset: `data/processed/dataset_5000.csv`
+- Detailed audit manifest: `data/manifests/dataset_manifest.csv` (contains original source, collection timestamp, label, domain, path length, and verification hash)
+- Provenance metadata: `data/manifests/dataset_provenance.json`
+
+### Re-running Dataset Collection and Preprocessing
+To re-fetch raw feeds and regenerate the balanced 5,000-sample dataset:
+
 ```bash
-# Spin up complete stack (FastAPI backend + React frontend + Nginx)
-docker-compose up -d --build
+python -m ml.datasets.downloader
 ```
 
 ---
 
-## 3. Automated Test Suite Verification
+## 4. Dataset Partitioning & Split Protocol
 
-To execute the complete unit and integration test suite (94 passing tests):
+The benchmark implements an **80:20 Stratified Split** with fixed random seed `42`:
+- **Training Set**: 4,000 URLs (2,000 phishing, 2,000 benign)
+- **Holdout Test Set**: 1,000 URLs (500 phishing, 500 benign)
 
-```bash
-# Set PYTHONPATH to project root
-export PYTHONPATH=.   # On Windows PowerShell: $env:PYTHONPATH="."
-
-# Run Pytest suite
-python -m pytest backend/tests/ ml/tests/ -v
-```
-
-Expected output: `94 passed in ~15-30s`
-
----
-
-## 4. Replicating Experiments 1–17
-
-To execute the master experiment runner that evaluates all 17 research experiments:
-
-```bash
-python scripts/run_all_experiments.py
-```
-
-This script produces:
-- `research/results/experiment_results.json` (Empirical metrics for Experiments 1–17)
-- `ml/models/saved/baseline_metrics.json`
-- `ml/models/saved/fusion_metrics.json`
-- `ml/models/saved/experiment7_adaptive_metrics.json`
-
-### Experiments Summary Matrix
-| Experiment ID | Description | Primary Metric | Target Value |
-| :--- | :--- | :--- | :--- |
-| **Exp 1–5** | Single-Modality Baselines | Macro F1 / Latency | Exp 1: 0.908 (0.45ms), Exp 2: 0.932 (18.2ms), Exp 5: 0.924 (210ms) |
-| **Exp 6** | Full Multimodal Fusion | Test Accuracy | **98.6%** (385ms) |
-| **Exp 7** | Adaptive Decision Engine | Speedup & Accuracy | **98.4% Accuracy, 6.2x Mean Speedup** |
-| **Exp 8–13** | Single-Modality Ablations | $\Delta$ F1 Degradation | Exp 8: -0.046, Exp 9: -0.037, Exp 13: -0.030 |
-| **Exp 14** | Temporal Staleness (9-mo) | Accuracy Retention | 97.6% retention over 9 months |
-| **Exp 15** | Adversarial Obfuscations | Detection Boost | +34.7% boost over URL-only models |
-| **Exp 16** | Unseen Domain Split | Generalization Gap | **0.005** (Zero domain leakage) |
-| **Exp 17** | Resource Utilization | Throughput & Memory | 20.7 URLs/sec, 420.5 MB RAM |
-
----
-
-## 5. Replicating Publication Figures & LaTeX Tables
-
-To generate all 300 DPI vector figures and LaTeX code snippet tables:
-
-```bash
-# Run Advanced Evaluation Suite (Phase 18)
-python scripts/run_advanced_evaluation.py
-
-# Generate Figures & Tables (Phase 19)
-python scripts/generate_paper_artifacts.py
-```
-
-### Generated Artifacts Location
-- **Figures**: `research/figures/`
-  - `fig1_adaptive_latency_vs_accuracy.png`
-  - `fig2_modality_ablation_f1_drops.png`
-  - `fig3_temporal_drift_stability.png`
-  - `fig4_adversarial_homograph_resilience.png`
-  - `fig5_confusion_matrix_multimodal.png`
-- **Tables**: `research/tables/`
-  - `table1_baseline_vs_fusion_metrics.tex`
-  - `table2_adaptive_stage_performance.tex`
-  - `table3_ablation_study_results.tex`
-
----
-
-## 6. Zero-Leakage Dataset Splitting Protocol
-
-To verify zero domain leakage during dataset partitioning:
-
+### Domain Leakage Diagnostic & Domain-Disjoint Partitioning
+In addition to the primary 80:20 stratified holdout benchmark, PhishGuard evaluates generalization under strict zero domain overlap:
 ```python
-from ml.datasets.split_strategy import DatasetSplitter
+from ml.datasets.split_strategy import stratified_split, check_domain_leakage, domain_disjoint_split
+import pandas as pd
 
-splitter = DatasetSplitter()
-splits = splitter.domain_disjoint_split(manifest_df)
-# Asserts len(train_domains.intersection(test_domains)) == 0
+df = pd.read_csv("data/processed/dataset_5000.csv")
+train_df, test_df = stratified_split(df, train_ratio=0.80, random_state=42)
+
+# Check overlap diagnostics
+overlap_info = check_domain_leakage(train_df, test_df)
+print(f"Domain overlap: {overlap_info['domain_overlap_count']} domains")
 ```
 
 ---
 
-## 7. Interactive React Dashboard
+## 5. Model Training & Stage 1 Architecture
 
-To launch the interactive web dashboard for real-time URL inspection:
+### Feature Hierarchy Alignment
+- **GBDT Classifier Input**: Exactly **22 canonical URL lexical and structural features** extracted via `URLAnalyzer` (e.g., URL length, Shannon entropy, digit ratio, token counts, tld length, path depth).
+- **Stage 1 Heuristic & Domain Logic**: In addition to GBDT, Stage 1 evaluates **10 SSL/TLS features** and **6 WHOIS/RDAP features** (totaling **38 Stage 1 features**) alongside Levenshtein typosquatting analysis.
+- **Full Non-Visual Operational Pipeline**: **79 dimensions** across Stage 1 (38d), Stage 2 HTML DOM (24d), and Stage 3 OCR text analytics (17d).
+- **Target Multimodal Representation**: **591 dimensions** when combining the 79 non-visual features with 512-dimensional CLIP ViT-B/32 visual embeddings (Stage 4 / future work vision).
+
+### Training Stage 1 GBDT
+To extract the 22 canonical features from genuine training samples and train the `GradientBoostingClassifier` (`n_estimators=150`, `max_depth=5`, `learning_rate=0.1`):
+
+```bash
+python ml/training/train_real_phish_model.py
+```
+
+This serializes the verified model artifacts to `ml/models/saved/`:
+- `stage1_ml_model.joblib`: Serialized Scikit-Learn GBDT model
+- `stage1_scaler.joblib`: Preprocessing StandardScaler fitted on training features
+- `stage1_metrics.json`: Empirical evaluation metrics on the holdout test set
+- `test_predictions.json`: Per-sample ground truth, prediction, and probability audit log
+
+---
+
+## 6. Empirical Evaluation Results
+
+### Primary Benchmark: 80:20 Stratified Holdout Test Set (N = 1,000)
+
+| Metric | Measured Value |
+| :--- | :--- |
+| **Accuracy** | **95.70%** (957 / 1,000 correct) |
+| **Precision** | **95.98%** |
+| **Recall** | **95.40%** |
+| **F1-Score** | **95.69%** |
+| **ROC-AUC** | **0.9914** |
+| **True Negatives (TN)** | 480 |
+| **False Positives (FP)** | 20 |
+| **False Negatives (FN)** | 23 |
+| **True Positives (TP)** | 477 |
+
+### Zero-Leakage Domain-Disjoint Evaluation (N = 734, 0 overlapping domains)
+
+| Metric | Measured Value |
+| :--- | :--- |
+| **Accuracy** | **93.46%** |
+| **Precision** | **95.92%** |
+| **Recall** | **89.74%** |
+| **F1-Score** | **92.73%** |
+| **ROC-AUC** | **0.9840** |
+| **True Negatives (TN)** | 380 |
+| **False Positives (FP)** | 13 |
+| **False Negatives (FN)** | 35 |
+| **True Positives (TP)** | 306 |
+
+---
+
+## 7. Automated Test Suite Verification
+
+To execute automated unit and integration tests across both the machine learning pipeline and backend decision engine:
+
+```bash
+# On Windows PowerShell:
+$env:PYTHONPATH="."
+python -m pytest ml/tests/ backend/tests/ -v
+
+# On Linux/macOS:
+export PYTHONPATH=.
+python -m pytest ml/tests/ backend/tests/ -v
+```
+
+This validates:
+- Dataset integrity, checksums, and schema consistency (`ml/tests/test_dataset_pipeline.py`)
+- Stratified 80:20 partitioning and domain leakage diagnostics
+- GBDT feature extraction parity (22 canonical features matching inference)
+- Stage 1, Stage 2, and Stage 3 adaptive decision flows (`backend/tests/test_adaptive_engine.py`)
+- REST API contracts and early-exit routing (`backend/tests/test_api.py`)
+
+---
+
+## 8. Compiling the Research Paper Document
+
+The research paper is maintained in Markdown and automatically compiled into a formatted Microsoft Word (`.docx`) manuscript:
+
+```bash
+python scripts/convert_to_docx.py
+```
+Output artifact: `docs/PhishGuard_Q1_Journal_Research_Paper.docx`
+
+---
+
+## 9. Interactive React Dashboard & Backend Server
+
+To launch the live operational system:
 
 ```bash
 # Terminal 1: Launch FastAPI Backend
@@ -146,4 +190,4 @@ cd frontend
 npm run dev
 ```
 
-Open browser at `http://localhost:3000` to interactively analyze URLs, visualize 4-stage execution waterfalls, and explore SHAP feature attribution.
+Open `http://localhost:3000` to interactively inspect URLs with adaptive early-exit execution waterfalls.

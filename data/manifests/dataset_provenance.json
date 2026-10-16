@@ -1,0 +1,50 @@
+{
+  "dataset_version": "1.0-genuine",
+  "collection_timestamp": "2026-10-16T19:18:49.801901+00:00",
+  "random_seed": 42,
+  "total_samples": 5000,
+  "phishing_samples": 2500,
+  "benign_samples": 2500,
+  "sources": {
+    "openphish": 300,
+    "phishtank": 2200,
+    "tranco": 2469
+  },
+  "split": {
+    "strategy": "stratified_80_20",
+    "train_samples": 4000,
+    "test_samples": 1000,
+    "train_phishing": 2000,
+    "train_benign": 2000,
+    "test_phishing": 500,
+    "test_benign": 500
+  },
+  "domain_diagnostics": {
+    "train_unique_domains": 3040,
+    "test_unique_domains": 838,
+    "overlapping_domain_count": 125,
+    "overlapping_domains_sample": [
+      "105419.cc",
+      "105427.cc",
+      "12gg92701ffff.cfd",
+      "237780coinbase.com",
+      "30102301ghhh.lol",
+      "789365.cc",
+      "8078794.cc",
+      "abrdns.com",
+      "accesscam.org",
+      "am-prime-sonnerie.com",
+      "amazonaws.com",
+      "avnt7293.pro",
+      "azurewebsites.net",
+      "bitrix24.site",
+      "blogspot.com",
+      "bolt.host",
+      "calendrierfiscal26.com",
+      "camdvr.org",
+      "canna-medic.eu",
+      "cloud-ip.cc"
+    ],
+    "zero_leakage": false
+  }
+}

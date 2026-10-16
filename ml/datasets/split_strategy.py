@@ -208,3 +208,68 @@ class DatasetSplitter:
             s["split"] = "val"
         for s in test:
             s["split"] = "test"
+
+    def stratified_split(
+        self, samples: list[dict[str, Any]], train_ratio: float = 0.80
+    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+        """Perform 80:20 stratified train/holdout split matching the research report.
+
+        Args:
+            samples: List of sample dictionaries containing 'label'.
+            train_ratio: Target train ratio (default 0.80 for 80:20 split).
+
+        Returns:
+            Tuple of (train_samples, test_samples).
+        """
+        benign = [s for s in samples if s.get("label") == "benign"]
+        phishing = [s for s in samples if s.get("label") == "phishing"]
+
+        rng = random.Random(self.seed)
+        rng.shuffle(benign)
+        rng.shuffle(phishing)
+
+        n_train_b = int(round(len(benign) * train_ratio))
+        n_train_p = int(round(len(phishing) * train_ratio))
+
+        train = benign[:n_train_b] + phishing[:n_train_p]
+        test = benign[n_train_b:] + phishing[n_train_p:]
+
+        rng.shuffle(train)
+        rng.shuffle(test)
+
+        for s in train:
+            s["split"] = "train"
+        for s in test:
+            s["split"] = "test"
+
+        logger.info(
+            f"Stratified Split (80:20): train={len(train)} (benign={n_train_b}, phish={n_train_p}), "
+            f"test={len(test)} (benign={len(benign)-n_train_b}, phish={len(phishing)-n_train_p})"
+        )
+        return train, test
+
+    @staticmethod
+    def check_domain_leakage(
+        train: list[dict[str, Any]], test: list[dict[str, Any]]
+    ) -> dict[str, Any]:
+        """Check for domain overlap/leakage between train and test sets.
+
+        Args:
+            train: Training samples list.
+            test: Holdout test samples list.
+
+        Returns:
+            Dictionary containing domain leakage diagnostics.
+        """
+        train_domains = set((s.get("domain") or "").lower() for s in train if s.get("domain"))
+        test_domains = set((s.get("domain") or "").lower() for s in test if s.get("domain"))
+        overlap = train_domains.intersection(test_domains)
+
+        return {
+            "train_unique_domains": len(train_domains),
+            "test_unique_domains": len(test_domains),
+            "overlapping_domain_count": len(overlap),
+            "overlapping_domains_sample": sorted(list(overlap))[:20],
+            "zero_leakage": len(overlap) == 0,
+        }
+

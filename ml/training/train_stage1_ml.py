@@ -1,3 +1,10 @@
+"""Train Stage 1 GBDT Model on Genuine Dataset.
+
+Wrapper aligning with project training pipeline and genuine PhishTank/Tranco data.
+"""
+
+from __future__ import annotations
+
 import os
 import sys
 from pathlib import Path
@@ -5,77 +12,32 @@ from pathlib import Path
 # Ensure root directory is in sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-import joblib
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
 
-from backend.app.analyzers.url_analyzer import URLAnalyzer
+from ml.datasets.downloader import DatasetDownloader
+from ml.training.train_real_phish_model import extract_features_from_samples, train_phish_model
 
 
-def generate_stage1_dataset(num_samples: int = 2000, seed: int = 42) -> tuple[np.ndarray, np.ndarray]:
-    """Generate synthetic 22-dimensional Stage 1 feature vectors for model training."""
-    np.random.seed(seed)
-    num_phish = num_samples // 2
-    num_benign = num_samples - num_phish
+def generate_stage1_dataset(num_samples: int = 5000, seed: int = 42) -> tuple[np.ndarray, np.ndarray]:
+    """Extract genuine 22-dimensional Stage 1 feature vectors from genuine PhishTank & Tranco datasets.
 
-    analyzer = URLAnalyzer()
+    Args:
+        num_samples: Total number of samples (balanced 50% benign, 50% phishing).
+        seed: Random seed for sampling.
 
-    # Sample phishing patterns
-    phish_urls = [
-        "http://paypal-security-update-account.xyz/login",
-        "http://verify-bank-access-credential.top/signin",
-        "https://banestesnet.instaladorpj.com/login",
-        "http://192.168.1.1/login.php?user=admin",
-        "https://baccredomatic.stghv.com/accounts/login/",
-        "http://sharedomesdrlvespdfdocx.homes/pdf",
-        "http://allegro.o3459539423h.courses/checkout",
-        "https://magalu26anos.co/aniversario/rl1/index.html",
-        "http://regularizeprocesso-acesse.co/verify",
-        "https://canalrapido-facil-obewzt.webnode.page/?gad_source=1"
-    ]
-
-    # Sample benign patterns
-    benign_urls = [
-        "https://www.google.com/search?q=python",
-        "https://github.com/adish-kv/PhishGuard",
-        "https://en.wikipedia.org/wiki/Main_Page",
-        "https://www.microsoft.com/en-us/store",
-        "https://stackoverflow.com/questions",
-        "https://news.ycombinator.com/news",
-        "https://www.amazon.com/dp/B08N5WRWNW",
-        "https://docs.python.org/3/library/index.html",
-        "https://pypi.org/project/fastapi/",
-        "https://www.apple.com/iphone/"
-    ]
-
-    X = []
-    y = []
-
-    # Generate Phishing samples
-    for i in range(num_phish):
-        base_url = phish_urls[i % len(phish_urls)]
-        # Add random noise to features
-        feat = analyzer.extract_features(base_url).to_vector()
-        feat_noise = [f + np.random.normal(0, 0.05 * (abs(f) + 1.0)) for f in feat]
-        X.append(feat_noise)
-        y.append(1)
-
-    # Generate Benign samples
-    for i in range(num_benign):
-        base_url = benign_urls[i % len(benign_urls)]
-        feat = analyzer.extract_features(base_url).to_vector()
-        feat_noise = [f + np.random.normal(0, 0.05 * (abs(f) + 1.0)) for f in feat]
-        X.append(feat_noise)
-        y.append(0)
-
-    return np.array(X, dtype=np.float32), np.array(y, dtype=np.int32)
+    Returns:
+        Tuple of (feature matrix X, label vector y).
+    """
+    samples_per_class = num_samples // 2
+    downloader = DatasetDownloader()
+    samples, _ = downloader.build_genuine_dataset(samples_per_class=samples_per_class, seed=seed)
+    X, y, _ = extract_features_from_samples(samples)
+    return X, y
 
 
 def train_and_save_stage1_model() -> None:
-    """Train GBDT Stage 1 model matching report Section 3.7 and serialize to disk."""
-    from ml.training.train_real_phish_model import train_phish_model
-    train_phish_model()
+    """Train GBDT Stage 1 model on genuine dataset and serialize to disk."""
+    train_phish_model(samples_per_class=2500, seed=42)
 
 
 if __name__ == "__main__":

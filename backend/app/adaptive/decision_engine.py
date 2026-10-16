@@ -351,6 +351,8 @@ class AdaptiveDecisionEngine:
                 if ml_prob >= 0.50:
                     score = max(score, ml_prob)
                     reasons.append(f"Stage 1 ML GBDT model predicts phishing probability ({round(ml_prob * 100, 1)}%)")
+                elif ml_prob <= 0.15 and not typosquat_res.is_typosquat:
+                    score = min(score, ml_prob)
             except Exception as e:
                 logger.warning(f"Stage 1 ML model inference error: {e}")
 
@@ -408,7 +410,7 @@ class AdaptiveDecisionEngine:
 
         # 5. Path & Query heuristics (ad redirects, deep directories)
         path_str = raw_url.split("?", 1)[0]
-        if path_str.count("/") >= 4 or "englishdomain" in raw_url.lower() or "qr-figital" in raw_url.lower():
+        if path_str.count("/") >= 5 or "englishdomain" in raw_url.lower() or "qr-figital" in raw_url.lower():
             score += 0.20
             reasons.append("Deep path directory structure with target campaign tokens")
         if "gad_source=" in raw_url.lower() or "gclid=" in raw_url.lower() or "fbclid=" in raw_url.lower():

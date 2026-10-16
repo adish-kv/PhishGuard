@@ -232,13 +232,15 @@ def parse_inline_formatting(p, text):
             p.add_run(part)
 
 if __name__ == '__main__':
-    md_file = r"C:\Users\adipk\.gemini\antigravity\brain\70d341e0-ed21-41f2-867d-aa04855e36d0\phishguard_comprehensive_technical_report.md"
-    os.makedirs(r"c:\Users\adipk\Desktop\PhishGuard\docs", exist_ok=True)
-    docx_file = r"c:\Users\adipk\Desktop\PhishGuard\docs\PhishGuard_Q1_Journal_Research_Paper.docx"
-    markdown_to_docx(md_file, docx_file)
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    docs_dir = os.path.join(repo_root, "docs")
+    os.makedirs(docs_dir, exist_ok=True)
     
-    # Also save a Markdown copy in docs
-    md_copy = r"c:\Users\adipk\Desktop\PhishGuard\docs\PhishGuard_Q1_Journal_Research_Paper.md"
-    with open(md_file, 'r', encoding='utf-8') as src, open(md_copy, 'w', encoding='utf-8') as dst:
-        dst.write(src.read())
-    print(f"Markdown copy saved to {md_copy}")
+    md_file = os.path.join(docs_dir, "PhishGuard_Q1_Journal_Research_Paper.md")
+    docx_file = os.path.join(docs_dir, "PhishGuard_Q1_Journal_Research_Paper.docx")
+    
+    if os.path.exists(md_file):
+        markdown_to_docx(md_file, docx_file)
+    else:
+        print(f"Error: {md_file} not found")
+

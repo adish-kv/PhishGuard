@@ -68,6 +68,12 @@ copy .env.example .env  # Windows
 # Initialize database
 python scripts/setup_database.py
 
+# Download genuine dataset (OpenPhish, PhishTank, Tranco 1M) & build 5,000 samples
+python -m ml.datasets.downloader
+
+# Train Stage 1 GBDT on 22 canonical URL features (80:20 stratified split)
+python ml/training/train_real_phish_model.py
+
 # Run backend
 uvicorn backend.app.main:app --reload --port 8000
 
@@ -80,8 +86,12 @@ npm run dev
 ### Run Tests
 
 ```bash
-# Unit tests
+# ML dataset pipeline & feature parity tests
+pytest ml/tests/ -v
+
+# Backend unit & security tests
 pytest backend/tests/ -v
+
 
 # Security tests
 pytest backend/tests/test_security.py -v

@@ -1,0 +1,72 @@
+{
+  "model_architecture": "GradientBoostingClassifier",
+  "hyperparameters": {
+    "n_estimators": 150,
+    "max_depth": 5,
+    "learning_rate": 0.1,
+    "random_state": 42
+  },
+  "evaluation_timestamp": "2026-10-16T19:18:51.101999+00:00",
+  "dataset_metadata": {
+    "total_samples": 5000,
+    "phishing_samples": 2500,
+    "benign_samples": 2500,
+    "features_used": [
+      "url_length",
+      "hostname_length",
+      "path_length",
+      "query_length",
+      "num_dots",
+      "num_hyphens",
+      "num_subdomains",
+      "num_special_chars",
+      "num_digits",
+      "digit_ratio",
+      "char_entropy",
+      "domain_to_path_ratio",
+      "has_ip",
+      "has_at_symbol",
+      "has_punycode",
+      "uses_https",
+      "has_url_encoding",
+      "has_abnormal_port",
+      "suspicious_keyword_count",
+      "suspicious_tld",
+      "hostname_token_count",
+      "path_token_count"
+    ],
+    "feature_dim": 22,
+    "random_seed": 42,
+    "split_ratio": "80:20 stratified",
+    "train_sample_count": 4000,
+    "test_sample_count": 1000
+  },
+  "primary_holdout_evaluation": {
+    "accuracy": 0.957,
+    "precision": 0.9598,
+    "recall": 0.954,
+    "f1_score": 0.9569,
+    "roc_auc": 0.9914,
+    "confusion_matrix": {
+      "true_negatives": 480,
+      "false_positives": 20,
+      "false_negatives": 23,
+      "true_positives": 477
+    }
+  },
+  "domain_disjoint_evaluation": {
+    "test_samples": 734,
+    "accuracy": 0.9346,
+    "precision": 0.9592,
+    "recall": 0.8974,
+    "f1_score": 0.9273,
+    "roc_auc": 0.984,
+    "confusion_matrix": {
+      "true_negatives": 380,
+      "false_positives": 13,
+      "false_negatives": 35,
+      "true_positives": 306
+    }
+  },
+  "training_duration_seconds": 1.3
+}

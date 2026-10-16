@@ -96,3 +96,40 @@ class TestDatasetPipeline:
             assert s["domain"].lower() in held_out
         for s in train:
             assert s["domain"].lower() not in held_out
+
+    def test_stratified_80_20_split(self, downloader: DatasetDownloader, splitter: DatasetSplitter) -> None:
+        """Verify 80:20 stratified split preserves exact class balance."""
+        samples = downloader.generate_reproducible_sample_set(num_samples=100)
+        train, test = splitter.stratified_split(samples, train_ratio=0.80)
+
+        assert len(train) == 80
+        assert len(test) == 20
+
+        train_phish = sum(1 for s in train if s["label"] == "phishing")
+        train_benign = sum(1 for s in train if s["label"] == "benign")
+        test_phish = sum(1 for s in test if s["label"] == "phishing")
+        test_benign = sum(1 for s in test if s["label"] == "benign")
+
+        assert train_phish == 40
+        assert train_benign == 40
+        assert test_phish == 10
+        assert test_benign == 10
+
+        assert all(s["split"] == "train" for s in train)
+        assert all(s["split"] == "test" for s in test)
+
+    def test_domain_leakage_diagnostic(self, splitter: DatasetSplitter) -> None:
+        """Verify check_domain_leakage detects and reports domain overlap."""
+        train = [
+            {"domain": "google.com", "label": "benign"},
+            {"domain": "phish1.com", "label": "phishing"},
+        ]
+        test = [
+            {"domain": "google.com", "label": "benign"},
+            {"domain": "phish2.com", "label": "phishing"},
+        ]
+        diag = splitter.check_domain_leakage(train, test)
+        assert diag["overlapping_domain_count"] == 1
+        assert diag["overlapping_domains_sample"] == ["google.com"]
+        assert diag["zero_leakage"] is False
+

@@ -39,12 +39,15 @@ data/screenshots/
 data/html/
 *.csv
 !data/manifests/.gitkeep
+!data/processed/dataset_5000.csv
+!data/manifests/dataset_manifest.csv
 
 # Models
 *.pt
 *.pth
 *.pkl
 *.joblib
+!ml/models/saved/*.joblib
 *.h5
 *.onnx
 ml/experiments/mlruns/
